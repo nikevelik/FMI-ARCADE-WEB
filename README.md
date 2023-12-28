@@ -10,5 +10,4 @@ The application has the following functionalities:
 
 ## Code documentation:
 ### Helper Functions
-    1. dblIntAdd - perform an addition of two unsigned integers (a and c) with a carry (b) and handle overflow by incrementing the carry.
-    
+1. dblIntAdd - perform an addition of two unsigned integers (a and c) with a carry (b) and handle overflow by incrementing the carry.
