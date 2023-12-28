@@ -22,6 +22,11 @@ unsigned int getChooseBitByBit(unsigned int x, unsigned int y, unsigned int z) {
     return ((x & y) ^ (~x & z));
 }
 
+// each result bit is according to the majority of the 3 input bits for x, y and z.
+unsigned int getBitwiseMajority(unsigned int x, unsigned int y, unsigned int z) {
+    return ((x & y) ^ (x & z) ^ (y & z));
+}
+
 
 int main(){
 
