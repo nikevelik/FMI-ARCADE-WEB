@@ -89,6 +89,7 @@ void getHashFromFile(const char* fileName, char* dest) {
     file.close();
 }
 
+// check if hashes match or not
 bool compareHashes(const char* hash1, const char* hash2) {
     for (int i = 0; i < HASH_LEN; ++i) {
         if (*(hash1 + i) != *(hash2 + i)) {
