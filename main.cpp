@@ -75,13 +75,35 @@ void saveHashToFile(const char* str, const char* filename) {
     cout << "String saved to file: " << filename << endl;
 }
 
+
+// gets message from file and saves it to dest.
+void getHashFromFile(const char* fileName, char* dest) {
+    std::ifstream file(fileName);
+
+    if (!file.is_open()) {
+        std::cerr << "Error: Unable to open file " << fileName << std::endl;
+        return;
+    }
+    file.read(dest, HASH_LEN);
+    dest[HASH_LEN] = '\0';
+    file.close();
+}
+
 int main(){
 
-    const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
+    ///const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
 
-    const char* filename = "output.txt";
+    ///const char* filename = "output.txt";
 
-    saveHashToFile(myString, filename);
+    ///saveHashToFile(myString, filename);
+
+
+    ///const char* fileName = "output.txt";
+    ///char dest[HASH_LEN + 1];
+
+    ///getHashFromFile(fileName, dest);
+
+    /// std::cout << "String read from file: " << dest << std::endl;
 
     return 0;
 }
