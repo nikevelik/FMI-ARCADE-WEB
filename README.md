@@ -12,3 +12,6 @@ The application has the following functionalities:
 ### Helper Functions
 1. addWithCarry - Incrementation of a number, handle overflow by incrementing the carry.
     - The addWithCarry function is necessary to keep track of the total bit length of the input data processed by the SHA-256 algorithm. The bit length is an integral part of the SHA-256 algorithm, and it influences the finalization steps and ensures that the entire message length is taken into account when computing the hash.
+
+2. getRightRotation - Circular right rotation - shift right and wrap the shifted bits on the left.
+
