@@ -28,3 +28,9 @@ The application has the following functionalities:
 
 ### Constants
 1. Round Constants (K0-K63): SHA-256 uses a set of 64 constant 32-bit words (K0, K1, ..., K63) during the processing of each 512-bit block of the input message. These constants are derived from the fractional parts of the cube roots of the first 64 prime numbers.
+2. 
+
+
+### File I/O
+
+1. saveHashToFile - saves message of length HASH_LEN (str) to a file (filename)

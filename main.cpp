@@ -61,7 +61,7 @@ const unsigned int roundConstants[64] = {
 
 const unsigned int HASH_LEN = 64;
 
-
+// saves message of length HASH_LEN (str) to a file (filename)
 void saveHashToFile(const char* str, const char* filename) {
     ofstream outFile(filename, ios::binary);
 
