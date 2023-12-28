@@ -27,6 +27,25 @@ unsigned int getBitwiseMajority(unsigned int x, unsigned int y, unsigned int z) 
     return ((x & y) ^ (x & z) ^ (y & z));
 }
 
+// rotation at 2, 13, 22.
+unsigned int expansionPermutation0(unsigned int x) {
+    return getRightRotation(x, 2) ^ getRightRotation(x, 13) ^ getRightRotation(x, 22);
+}
+
+// rotation at 6, 11, 25.
+unsigned int expansionPermutation1(unsigned int x) {
+    return getRightRotation(x, 6) ^ getRightRotation(x, 11) ^ getRightRotation(x, 25);
+}
+
+// rotation and shifting at 7, 18, 3.
+unsigned int sigma0(unsigned int x) {
+    return getRightRotation(x, 7) ^ getRightRotation(x, 18) ^ (x >> 3);
+}
+
+// rotation and shifting at 17, 19, 10.
+unsigned int sigma1(unsigned int x) {
+    return getRightRotation(x, 17) ^ getRightRotation(x, 19) ^ (x >> 10);
+}
 
 int main(){
 
