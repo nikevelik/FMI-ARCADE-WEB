@@ -18,12 +18,6 @@ unsigned int getRightRotation(unsigned int value, unsigned int shift) {
 
 // 'x' chooses between 'y' or 'z'
 // for each '1' ('0') bit in x, get the corresponding bit from y (from z)
-unsigned int choose(unsigned int x, unsigned int y, unsigned int z) {
-    return ((x & y) ^ (~x & z));
-}
-
-// 'x' chooses between 'y' or 'z'
-// for each '1' ('0') bit in x, get the corresponding bit from y (from z)
 unsigned int getChooseBitByBit(unsigned int x, unsigned int y, unsigned int z) {
     return ((x & y) ^ (~x & z));
 }
