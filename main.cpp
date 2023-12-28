@@ -3,12 +3,12 @@
 using namespace std;
 
 
-//  perform an addition of two unsigned integers (a and c) with a carry (b) and handle overflow by incrementing the carry.
-void dblIntAdd(unsigned int& a, unsigned int& b, unsigned int c) {
-    if (a > 0xffffffffu - c) {
-        ++b;
+//  Incrementation of a number, handle overflow by incrementing the carry.
+void addWithCarry(unsigned int& main, unsigned int& carry, unsigned int addend) {
+    if (main > 0xffffffff - addend) {
+        ++carry;
     }
-    a += c;
+    main += addend;
 }
 
 int main(){
