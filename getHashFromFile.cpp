@@ -3,34 +3,27 @@
 
 const unsigned int HASH_LEN = 64;
 
-void readAndSaveString(const char* fileName, char* dest) {
-    // Open the file
+void getHashFromFile(const char* fileName, char* dest) {
     std::ifstream file(fileName);
 
-    // Check if the file is open
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << fileName << std::endl;
         return;
     }
 
-    // Read the first 64 characters from the file
-    file.read(dest, 64);
+    file.read(dest, HASH_LEN);
 
-    // Close the file
+    dest[HASH_LEN] = '\0';
+
     file.close();
 }
 
 int main() {
     const char* fileName = "output.txt";
-    char dest[HASH_LEN + 1]; // Assuming one extra character for null-termination
+    char dest[HASH_LEN + 1];
 
-    // Call the function to read and save the string
-    readAndSaveString(fileName, dest);
+    getHashFromFile(fileName, dest);
 
-    // Null-terminate the destination string
-    dest[64] = '\0';
-
-    // Display the result
     std::cout << "String read from file: " << dest << std::endl;
 
     return 0;

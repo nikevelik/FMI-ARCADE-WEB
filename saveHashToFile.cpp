@@ -21,7 +21,7 @@ void saveHashToFile(const char* str, const char* filename) {
 }
 
 int main() {
-    const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
+    const char* myString = "111111This is a 64-symbol string that will be saved to a file.12";
 
     const char* filename = "output.txt";
 

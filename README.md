@@ -34,3 +34,7 @@ The application has the following functionalities:
 ### File I/O
 
 1. saveHashToFile - saves message of length HASH_LEN (str) to a file (filename)
+
+2. getHashFromFile - gets message from file and saves it to dest.
+
+3. compareHashes - check if hashes match or not
