@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cstring>
+#include <fstream>
 using namespace std;
 
 
@@ -58,7 +59,29 @@ const unsigned int roundConstants[64] = {
 	0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
+const unsigned int HASH_LEN = 64;
+
+
+void saveHashToFile(const char* str, const char* filename) {
+    ofstream outFile(filename, ios::binary);
+
+    if (!outFile.is_open()) {
+        cerr << "Error opening file: " << filename << endl;
+        return;
+    }
+
+    outFile.write(str, HASH_LEN);
+    outFile.close();
+    cout << "String saved to file: " << filename << endl;
+}
+
 int main(){
+
+    const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
+
+    const char* filename = "output.txt";
+
+    saveHashToFile(myString, filename);
 
     return 0;
 }

@@ -1,0 +1,1 @@
+111111This is a 64-symbol string that will be saved to a file.12
