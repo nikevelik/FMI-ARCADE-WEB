@@ -11,6 +11,11 @@ void addWithCarry(unsigned int& main, unsigned int& carry, unsigned int addend) 
     main += addend;
 }
 
+// circular right rotation - shift right and wrap the shifted bits on the left.
+unsigned int getRightRotation(unsigned int value, unsigned int shift) {
+    return ((value >> shift) | (value << (32 - shift)));
+}
+
 int main(){
 
     return 0;
