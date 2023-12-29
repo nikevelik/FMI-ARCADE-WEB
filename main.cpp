@@ -25,7 +25,7 @@ const unsigned int INITIAL_HASHES[8] = {
 
 };
 
-const char HEX_CHARS[] = "0123456789abcdef";
+const char * HEX_CHARS = "0123456789abcdef";
 
 unsigned int MAX_FILESIZE_BYTES = 1024;
 
@@ -36,10 +36,12 @@ int strLen(const char* str) {
     if(!str){
         return 0;
     }
+
     int len = 0;
     while (str[len] != '\0') {
         len++;
     }
+
     return len;
 }
 
@@ -48,6 +50,7 @@ void memSet(unsigned char* ptr, const char value, const int num) {
     if(!ptr){
         return;
     }
+
     for (int i = 0; i < num; i++) {
         ptr[i] = value;
     }
@@ -58,22 +61,9 @@ void sprintF(char* dest, const int value) {
     if(!dest){
         return;
     }
+
     dest[0] = HEX_CHARS[(value >> 4) & 0xF];
     dest[1] = HEX_CHARS[value & 0xF];
-}
-
-// Concatenate strings
-void strCat(char* dest, const char* src) {
-    if(!dest || !src){
-        return;
-    }
-    int destLen = strLen(dest);
-    int i = 0;
-    while (src[i] != '\0') {
-        dest[destLen + i] = src[i];
-        i++;
-    }
-    dest[destLen + i] = '\0';
 }
 
 //  Incrementation of a number, handle overflow by incrementing the carry.
@@ -125,11 +115,13 @@ bool compareHashes(const char* hash1, const char* hash2) {
     if(!hash1 | !hash2){
         return 0;
     }
+
     for (int i = 0; i < HASH_LEN; ++i) {
         if (*(hash1 + i) != *(hash2 + i)) {
             return 0;
         }
     }
+
     return 1;
 }
 
@@ -145,6 +137,24 @@ void SHA256Init(unsigned int& datalen, unsigned int bitlen[2], unsigned int stat
     state[5] = INITIAL_HASHES[5];
     state[6] = INITIAL_HASHES[6];
     state[7] = INITIAL_HASHES[7];
+}
+
+void SHA256(char* data, char* dest) {
+    unsigned char sha_data[64];
+    unsigned int datalen;
+    unsigned int bitlen[2];
+    unsigned int state[8];
+    unsigned char hash[32];
+
+    SHA256Init(datalen, bitlen, state);
+    SHA256Update(sha_data, (unsigned char*)data, datalen, bitlen, state, strLen(data));
+    SHA256Final(sha_data, datalen, bitlen, state, hash);
+
+    for (int i = 0; i < 32; i++) {
+        sprintF(dest + i * 2, hash[i]);
+    }
+
+    dest[64] = '\0';
 }
 
 int main (){
