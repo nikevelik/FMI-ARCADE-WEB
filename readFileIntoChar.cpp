@@ -1,43 +1,32 @@
 #include <iostream>
 #include <fstream>
 
-const unsigned int MAX_FILE_SIZE = 10485760;  // 10,485,760 bytes = 10MB
+unsigned int MAX_FILESIZE_BYTES = 1024;
 
-
-void loadFileContent(const char* filename, char* dest, size_t destSize) {
-    std::ifstream file(filename, std::ios::binary | std::ios::ate); // Open file at the end to get its size
-
+bool readFile(const char* filename, char* dest) {
+    if(!dest || !filename){
+        return 0;
+    }
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
     if (!file.is_open()) {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        dest[0] = '\0'; // Empty string on failure
-        return;
+        return false;
     }
-
-    std::streamsize fileSize = file.tellg(); // Get file size
-    file.seekg(0, std::ios::beg); // Move back to the beginning of the file
-
-    if (fileSize > static_cast<std::streamsize>(destSize - 1)) {
-        std::cerr << "File size exceeds maximum allowed size." << std::endl;
-        dest[0] = '\0'; // Empty string
-        file.close();
-        return;
+    std::streamsize fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+    if (fileSize > MAX_FILESIZE_BYTES) {
+        return false;
     }
-
-    file.read(dest, fileSize); // Read the content into the provided buffer
-    dest[fileSize] = '\0'; // Null-terminate the string
-
-    file.close(); // Close the file
+    file.read(dest, fileSize);
+    dest[fileSize] = '\0';
+    file.close();
+    return true;
 }
 
 int main() {
-    const char* filename = "example.txt";
-    const size_t maxFileSize = MAX_FILE_SIZE;
-    char fileContent[maxFileSize];
-
-    loadFileContent(filename, fileContent, maxFileSize);
-
-    // Process the file content or print it
-    std::cout << "File Content:\n" << fileContent << std::endl;
-
+    const char* filename = "1KB.txt";
+    char fileContent[1024+1] = "";
+    if (readFile(filename, fileContent)) {
+        std::cout << "File content:\n" << fileContent << std::endl;
+    }
     return 0;
 }
