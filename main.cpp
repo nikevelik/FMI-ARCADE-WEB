@@ -1,8 +1,52 @@
 #include<iostream>
-#include<cstring>
 #include <fstream>
 using namespace std;
 
+// getting length of a string
+int strLen(const char* str) {
+    if(!str){
+        return 0;
+    }
+    int len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+// Set a block of memory to a specific value
+void memSet(unsigned char* ptr, char value, int num) {
+    if(!ptr){
+        return;
+    }
+    for (int i = 0; i < num; i++) {
+        ptr[i] = value;
+    }
+}
+
+// Format a string
+void sprintF(char* dest, int value) {
+    if(!dest){
+        return;
+    }
+    char hexChars[] = "0123456789abcdef";
+    dest[0] = hexChars[(value >> 4) & 0xF];
+    dest[1] = hexChars[value & 0xF];
+}
+
+// Concatenate strings
+void strCat(char* dest, const char* src) {
+    if(!dest || !src){
+        return;
+    }
+    int destLen = strLen(dest);
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[destLen + i] = src[i];
+        i++;
+    }
+    dest[destLen + i] = '\0';
+}
 
 //  Incrementation of a number, handle overflow by incrementing the carry.
 void addWithCarry(unsigned int& main, unsigned int& carry, unsigned int addend) {
