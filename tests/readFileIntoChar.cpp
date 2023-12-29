@@ -23,7 +23,7 @@ bool readFile(const char* filename, char* dest) {
 }
 
 int main() {
-    const char* filename = "1KB.txt";
+    const char* filename = "../../1KB.txt";
     char fileContent[1024+1] = "";
     if (readFile(filename, fileContent)) {
         std::cout << "File content:\n" << fileContent << std::endl;

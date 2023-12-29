@@ -19,7 +19,7 @@ void getHashFromFile(const char* fileName, char* dest) {
 }
 
 int main() {
-    const char* fileName = "output.txt";
+    const char* fileName = "../../1KB.txt";
     char dest[HASH_LEN + 1];
 
     getHashFromFile(fileName, dest);
