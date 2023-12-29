@@ -13,6 +13,8 @@ const unsigned int roundConstants[64] = {
 	0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
+const char HEX_CHARS[] = "0123456789abcdef";
+
 unsigned int MAX_FILESIZE_BYTES = 1024;
 
 const unsigned int HASH_LEN = 64;
@@ -30,7 +32,7 @@ int strLen(const char* str) {
 }
 
 // Set a block of memory to a specific value
-void memSet(unsigned char* ptr, char value, int num) {
+void memSet(unsigned char* ptr, const char value, const int num) {
     if(!ptr){
         return;
     }
@@ -39,14 +41,13 @@ void memSet(unsigned char* ptr, char value, int num) {
     }
 }
 
-// Format a string
-void sprintF(char* dest, int value) {
+// Formatting
+void sprintF(char* dest, const int value) {
     if(!dest){
         return;
     }
-    char hexChars[] = "0123456789abcdef";
-    dest[0] = hexChars[(value >> 4) & 0xF];
-    dest[1] = hexChars[value & 0xF];
+    dest[0] = HEX_CHARS[(value >> 4) & 0xF];
+    dest[1] = HEX_CHARS[value & 0xF];
 }
 
 // Concatenate strings
@@ -107,7 +108,6 @@ unsigned int sigma1(unsigned int x) {
     return getRightRotation(x, 17) ^ getRightRotation(x, 19) ^ (x >> 10);
 }
 
-
 // check if hashes match or not
 bool compareHashes(const char* hash1, const char* hash2) {
     if(!hash1 | !hash2){
@@ -121,7 +121,19 @@ bool compareHashes(const char* hash1, const char* hash2) {
     return 1;
 }
 
-
+void SHA256Init(unsigned int& datalen, unsigned int bitlen[2], unsigned int state[8]) {
+    datalen = 0;
+    bitlen[0] = 0;
+    bitlen[1] = 0;
+    state[0] = 0x6a09e667;
+    state[1] = 0xbb67ae85;
+    state[2] = 0x3c6ef372;
+    state[3] = 0xa54ff53a;
+    state[4] = 0x510e527f;
+    state[5] = 0x9b05688c;
+    state[6] = 0x1f83d9ab;
+    state[7] = 0x5be0cd19;
+}
 
 int main (){
 
