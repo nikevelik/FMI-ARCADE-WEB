@@ -11,7 +11,7 @@ The application has the following functionalities:
 ### String functions:
 1. strLen
 2. strCat
-3. sprintF
+3. intToHex
 4. memSet
 - regular string functions, allow independence from library <cstring>
 
@@ -46,3 +46,7 @@ The application has the following functionalities:
 3. compareHashes - check if hashes match or not
 
 4. readFileIntoChar - loads File Content into char[] variable. Limited by MAX_FILESIZE_BYTES
+
+### SHA functions
+1. SHA256Init - initialize helper variables. uses default hashes (hard-coded in the function)
+2. SHA256 - main function. 

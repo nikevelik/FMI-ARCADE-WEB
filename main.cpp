@@ -56,14 +56,21 @@ void memSet(unsigned char* ptr, const char value, const int num) {
     }
 }
 
-// Formatting
-void sprintF(char* dest, const int value) {
+// Formatting to HEX
+void intToHex(char* dest, const int value) {
     if(!dest){
         return;
     }
 
     dest[0] = HEX_CHARS[(value >> 4) & 0xF];
     dest[1] = HEX_CHARS[value & 0xF];
+}
+
+void intHashToHexHash(int hash[32], char * dest){
+    for (int i = 0; i < 32; i++) {
+        intToHex(dest + i * 2, hash[i]);
+    }
+    dest[64] = '\0';
 }
 
 //  Incrementation of a number, handle overflow by incrementing the carry.
@@ -149,12 +156,8 @@ void SHA256(char* data, char* dest) {
     SHA256Init(datalen, bitlen, state);
     SHA256Update(sha_data, (unsigned char*)data, datalen, bitlen, state, strLen(data));
     SHA256Final(sha_data, datalen, bitlen, state, hash);
+    intHashToHexHash(hash, dest);
 
-    for (int i = 0; i < 32; i++) {
-        sprintF(dest + i * 2, hash[i]);
-    }
-
-    dest[64] = '\0';
 }
 
 int main (){
