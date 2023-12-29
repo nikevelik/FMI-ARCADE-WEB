@@ -152,6 +152,8 @@ bool compareHashes(const char* hash1, const char* hash2) {
     return 1;
 }
 
+
+
 int main(){
 
     ///const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
