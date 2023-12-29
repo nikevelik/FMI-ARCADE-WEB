@@ -12,8 +12,9 @@ The application has the following functionalities:
 1. strLen
 2. strCat
 3. intToHex
-4. memSet
+4. memSet 
 - regular string functions, allow independence from library <cstring>
+5. intHashToHexHash - convert hash array of values 0-15 to a string with HEX digits
 
 ### Helper Functions
 1. addWithCarry - Incrementation of a number, handle overflow by incrementing the carry.

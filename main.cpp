@@ -66,6 +66,7 @@ void intToHex(char* dest, const int value) {
     dest[1] = HEX_CHARS[value & 0xF];
 }
 
+// convert hash array of values 0-15 to a string with HEX digits
 void intHashToHexHash(int hash[32], char * dest){
     for (int i = 0; i < 32; i++) {
         intToHex(dest + i * 2, hash[i]);
