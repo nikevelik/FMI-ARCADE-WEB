@@ -7,8 +7,14 @@ The application has the following functionalities:
 - saving a hashed message to a file
 - hashed message reading - determine if a submitted hash matches the hash of a read message
 
-
 ## Code documentation:
+### String functions:
+1. strLen
+2. strCat
+3. sprintF
+4. memSet
+- regular string functions, allow independence from library <cstring>
+
 ### Helper Functions
 1. addWithCarry - Incrementation of a number, handle overflow by incrementing the carry.
     - The addWithCarry function is necessary to keep track of the total bit length of the input data processed by the SHA-256 algorithm. The bit length is an integral part of the SHA-256 algorithm, and it influences the finalization steps and ensures that the entire message length is taken into account when computing the hash.
@@ -38,3 +44,5 @@ The application has the following functionalities:
 2. getHashFromFile - gets message from file and saves it to dest.
 
 3. compareHashes - check if hashes match or not
+
+4. readFileIntoChar - loads File Content into char[] variable. Limited by MAX_FILESIZE_BYTES
