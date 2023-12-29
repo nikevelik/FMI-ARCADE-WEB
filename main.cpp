@@ -107,6 +107,9 @@ const unsigned int HASH_LEN = 64;
 
 // saves message of length HASH_LEN (str) to a file (filename)
 void saveHashToFile(const char* str, const char* filename) {
+    if(!str | !filename){
+        return;
+    }
     ofstream outFile(filename, ios::binary);
 
     if (!outFile.is_open()) {
@@ -122,6 +125,9 @@ void saveHashToFile(const char* str, const char* filename) {
 
 // gets message from file and saves it to dest.
 void getHashFromFile(const char* fileName, char* dest) {
+    if(!fileName | !dest){
+        return;
+    }
     std::ifstream file(fileName);
 
     if (!file.is_open()) {
@@ -135,6 +141,9 @@ void getHashFromFile(const char* fileName, char* dest) {
 
 // check if hashes match or not
 bool compareHashes(const char* hash1, const char* hash2) {
+    if(!hash1 | !hash2){
+        return 0;
+    }
     for (int i = 0; i < HASH_LEN; ++i) {
         if (*(hash1 + i) != *(hash2 + i)) {
             return 0;
