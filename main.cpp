@@ -57,7 +57,7 @@ void memSet(unsigned char* ptr, const char value, const int num) {
 }
 
 // Formatting to HEX
-void intToHex(char* dest, const int value) {
+void toHexDigit(char* dest, const int value) {
     if(!dest){
         return;
     }
@@ -67,9 +67,9 @@ void intToHex(char* dest, const int value) {
 }
 
 // convert hash array of values 0-15 to a string with HEX digits
-void intHashToHexHash(int hash[32], char * dest){
+void hashToHexStr(unsigned char * hash, char * dest){
     for (int i = 0; i < 32; i++) {
-        intToHex(dest + i * 2, hash[i]);
+        toHexDigit(dest + i * 2, hash[i]);
     }
     dest[64] = '\0';
 }
@@ -157,7 +157,7 @@ void SHA256(char* data, char* dest) {
     SHA256Init(datalen, bitlen, state);
     SHA256Update(sha_data, (unsigned char*)data, datalen, bitlen, state, strLen(data));
     SHA256Final(sha_data, datalen, bitlen, state, hash);
-    intHashToHexHash(hash, dest);
+    hashToHexStr(hash, dest);
 
 }
 
