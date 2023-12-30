@@ -47,3 +47,45 @@ The application has the following functionalities:
 
 ### SHA functions
 1. SHA256 - main function. 
+    0. The `SHA256` function is the main component of the SHA-256 hashing algorithm, which generates a secure 256-bit hash (32-byte hash) from the given input string. The resulting hash is stored in the character array provided by the `dest` parameter.
+
+    1. Parameters
+        - `input_str` (const char*): The input string to be hashed.
+        - `dest` (char*): A pointer to the destination character array where the resulting hash will be stored.
+
+    2. Return Value
+        - `bool`: The function returns `true` if the hashing process is successful, and `false` if either the `dest` pointer or the `input_str` is null.
+    
+    3. Implementation Details
+        1. Input Validation:
+            - The function checks if the destination pointer (`dest`) and the input string pointer (`input_str`) are not null. If either is null, the function returns `false`.
+
+        2. Initialization:
+            - The function initializes a data buffer (`dataBuffer`) to store each 64-symbol block of the input.
+            - It tracks the last iterated symbol in the block (`idxInBuffer`) and the total bits iterated (`bitlen`).
+            - The sub-hashes (`subhashes`) are initialized with the initial hash values (`INITIAL_HASHES`).
+
+        3. SHA256 Update:
+            - The function calls the `SHA256Update` function to process the input string in 64-symbol blocks, updating the sub-hashes accordingly. If the update fails, the function returns `false`.
+
+        4. SHA256 Finalization:
+            - The function calls the `SHA256Final` function to include bias in the hash based on the input length, updating the sub-hashes. If the finalization fails, the function returns `false`.
+
+        5. Conversion to String:
+            - The function calls the `subhashesToStr` function to convert the sub-hashes into a hash string. If the conversion fails, the function returns `false`.
+
+        6. Success:
+            - If all steps are completed successfully, the function returns `true`.
+
+
+
+2. subhashesToStr - convert the 8 subparts of (4-byte) words into a whole hash
+    0. The `subhashesToStr` function is designed to convert an array of 8 subhashes, each represented as a 4-byte word, into a single hash string. The resulting hash string is stored in a character array provided as the `dest` parameter. The hash string is represented in hexadecimal format.
+    1. Parameters
+        - `subhashes` (unsigned int[8]): An array containing 8 subhashes, each represented as a 4-byte word.
+        - `dest` (char*): A pointer to the destination character array where the resulting hash string will be stored.
+    2. Return Value
+        - `bool`: The function returns `true` if the conversion is successful, and `false` if either the `dest` pointer or the `subhashes` array is null.
+
+    3. Implementation Details
+        The function iterates through each byte position (0 to 3) in the 4-byte words and each subhash in the `subhashes` array. For each byte, it extracts the byte at the specified position, calculates the corresponding index in the destination array (`dest`), and converts the byte to a hexadecimal representation. The resulting hash string is formed by concatenating the hexadecimal representations of the bytes.
