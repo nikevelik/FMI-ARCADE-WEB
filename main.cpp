@@ -31,49 +31,6 @@ unsigned int MAX_FILESIZE_BYTES = 1024;
 
 const unsigned int HASH_LEN = 64;
 
-// getting length of a string
-int strLen(const char* str) {
-    if(!str){
-        return 0;
-    }
-
-    int len = 0;
-    while (str[len] != '\0') {
-        len++;
-    }
-
-    return len;
-}
-
-// Set a block of memory to a specific value
-void memSet(unsigned char* ptr, const char value, const int num) {
-    if(!ptr){
-        return;
-    }
-
-    for (int i = 0; i < num; i++) {
-        ptr[i] = value;
-    }
-}
-
-// Formatting to HEX
-void toHexDigit(char* dest, const int value) {
-    if(!dest){
-        return;
-    }
-
-    dest[0] = HEX_CHARS[(value >> 4) & 0xF];
-    dest[1] = HEX_CHARS[value & 0xF];
-}
-
-// convert hash array of values 0-15 to a string with HEX digits
-void hashToHexStr(unsigned char * hash, char * dest){
-    for (int i = 0; i < 32; i++) {
-        toHexDigit(dest + i * 2, hash[i]);
-    }
-    dest[64] = '\0';
-}
-
 //  Incrementation of a number, handle overflow by incrementing the carry.
 void addWithCarry(unsigned int& main, unsigned int& carry, unsigned int addend) {
     if (main > 0xffffffff - addend) {
@@ -121,43 +78,51 @@ unsigned int sigma1(unsigned int x) {
 // check if hashes match or not
 bool compareHashes(const char* hash1, const char* hash2) {
     if(!hash1 | !hash2){
-        return 0;
+        return false;
     }
 
     for (int i = 0; i < HASH_LEN; ++i) {
         if (*(hash1 + i) != *(hash2 + i)) {
-            return 0;
+            return false;
         }
     }
 
     return 1;
 }
 
-void SHA256Init(unsigned int& idxInBuffer, unsigned int sha_bitlen[2], unsigned int sha_state[8]) {
-    idxInBuffer = 0;
-    sha_bitlen[0] = 0;
-    sha_bitlen[1] = 0;
-    sha_state[0] = INITIAL_HASHES[0];
-    sha_state[1] = INITIAL_HASHES[1];
-    sha_state[2] = INITIAL_HASHES[2];
-    sha_state[3] = INITIAL_HASHES[3];
-    sha_state[4] = INITIAL_HASHES[4];
-    sha_state[5] = INITIAL_HASHES[5];
-    sha_state[6] = INITIAL_HASHES[6];
-    sha_state[7] = INITIAL_HASHES[7];
-}
+bool SHA256(const char* input_str, char* dest) {
 
-void SHA256(char* input_str, char* dest) {
+    if(!dest){
+        return false;
+    }
+
+    if(!input_str){
+        return false;
+    }
+
+    // container for each 64-symbol block of the input
     unsigned char dataBuffer[64];
-    unsigned int idxInBuffer;
-    unsigned int sha_bitlen[2];
-    unsigned int sha_state[8];
-    unsigned char resultHash[32];
+    // keep track of last iterated symbol in block
+    unsigned int idxInBuffer = 0;
+    // keep track of total bits iterated
+    unsigned int bitlen[2] = {0, 0};
+    // sub-hashes (8 words of 32 bits)
+    unsigned int subhashes[8];
 
-    SHA256Init(idxInBuffer, sha_bitlen, sha_state);
-    SHA256Update(dataBuffer, (unsigned char*)input_str, idxInBuffer, sha_bitlen, sha_state);
-    SHA256Final(dataBuffer, idxInBuffer, sha_bitlen, sha_state, resultHash);
-    hashToHexStr(resultHash, dest);
+    for(unsigned int partIdx = 0; partIdx < 8; partIdx ++){
+        subhashes[partIdx] = INITIAL_HASHES[partIdx];
+    }
+
+    if(!SHA256Update(dataBuffer, (const unsigned char*)input_str, idxInBuffer, bitlen, subhashes)){
+        return false;
+    }
+    if(!SHA256Final(dataBuffer, idxInBuffer, bitlen, subhashes)){
+       return false;
+    }
+    if(!subhashesToStr(subhashes, dest)){
+        return false;
+    }
+    return true;
 }
 
 int main (){
