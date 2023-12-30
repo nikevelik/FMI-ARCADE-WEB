@@ -80,26 +80,46 @@ bool compareHashes(const char* hash1, const char* hash2) {
     if(!hash1 | !hash2){
         return false;
     }
-
     for (int i = 0; i < HASH_LEN; ++i) {
         if (*(hash1 + i) != *(hash2 + i)) {
             return false;
         }
     }
-
     return 1;
 }
 
-bool SHA256(const char* input_str, char* dest) {
 
+// convert the 8 subparts of (4-byte) words into a whole hash
+bool subhashesToStr(unsigned int subhashes[8], char* dest){
+    if(!dest || !subhashes){
+        return false;
+    }
+
+    // constant iteration length. can be done without iteration/ single for-iterator
+    for (unsigned int bytePos = 0; bytePos < 4; ++bytePos) {
+        // for each byte position in a subhashes
+        for(unsigned int partIdx = 0; partIdx < 8; ++partIdx){
+            // for each subhashes
+            //extract byte at position bytePos from subhash
+            unsigned int byte = (subhashes[partIdx] >> (24 - bytePos * 8)) & 0x000000ff; // 0-255
+            //calculate corresponding idx in dest
+            unsigned int charIdx = (bytePos + (4*partIdx)) * 2; // 0-63
+            dest[charIdx] = HEX_CHARS[(byte >> 4) & 0xF]; // 0-FF
+            dest[charIdx+1] = HEX_CHARS[byte & 0xF]; // 0-FF
+        }
+    }
+
+    dest[64] = '\0';
+    return true;
+}
+// main SHA function
+bool SHA256(const char* input_str, char* dest) {
     if(!dest){
         return false;
     }
-
     if(!input_str){
         return false;
     }
-
     // container for each 64-symbol block of the input
     unsigned char dataBuffer[64];
     // keep track of last iterated symbol in block
@@ -108,11 +128,9 @@ bool SHA256(const char* input_str, char* dest) {
     unsigned int bitlen[2] = {0, 0};
     // sub-hashes (8 words of 32 bits)
     unsigned int subhashes[8];
-
     for(unsigned int partIdx = 0; partIdx < 8; partIdx ++){
         subhashes[partIdx] = INITIAL_HASHES[partIdx];
     }
-
     if(!SHA256Update(dataBuffer, (const unsigned char*)input_str, idxInBuffer, bitlen, subhashes)){
         return false;
     }
