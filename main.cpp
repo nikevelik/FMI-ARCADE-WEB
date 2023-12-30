@@ -133,32 +133,31 @@ bool compareHashes(const char* hash1, const char* hash2) {
     return 1;
 }
 
-void SHA256Init(unsigned int& datalen, unsigned int bitlen[2], unsigned int state[8]) {
-    datalen = 0;
-    bitlen[0] = 0;
-    bitlen[1] = 0;
-    state[0] = INITIAL_HASHES[0];
-    state[1] = INITIAL_HASHES[1];
-    state[2] = INITIAL_HASHES[2];
-    state[3] = INITIAL_HASHES[3];
-    state[4] = INITIAL_HASHES[4];
-    state[5] = INITIAL_HASHES[5];
-    state[6] = INITIAL_HASHES[6];
-    state[7] = INITIAL_HASHES[7];
+void SHA256Init(unsigned int& idxInBuffer, unsigned int sha_bitlen[2], unsigned int sha_state[8]) {
+    idxInBuffer = 0;
+    sha_bitlen[0] = 0;
+    sha_bitlen[1] = 0;
+    sha_state[0] = INITIAL_HASHES[0];
+    sha_state[1] = INITIAL_HASHES[1];
+    sha_state[2] = INITIAL_HASHES[2];
+    sha_state[3] = INITIAL_HASHES[3];
+    sha_state[4] = INITIAL_HASHES[4];
+    sha_state[5] = INITIAL_HASHES[5];
+    sha_state[6] = INITIAL_HASHES[6];
+    sha_state[7] = INITIAL_HASHES[7];
 }
 
-void SHA256(char* data, char* dest) {
-    unsigned char sha_data[64];
-    unsigned int datalen;
-    unsigned int bitlen[2];
-    unsigned int state[8];
-    unsigned char hash[32];
+void SHA256(char* input_str, char* dest) {
+    unsigned char dataBuffer[64];
+    unsigned int idxInBuffer;
+    unsigned int sha_bitlen[2];
+    unsigned int sha_state[8];
+    unsigned char resultHash[32];
 
-    SHA256Init(datalen, bitlen, state);
-    SHA256Update(sha_data, (unsigned char*)data, datalen, bitlen, state, strLen(data));
-    SHA256Final(sha_data, datalen, bitlen, state, hash);
-    hashToHexStr(hash, dest);
-
+    SHA256Init(idxInBuffer, sha_bitlen, sha_state);
+    SHA256Update(dataBuffer, (unsigned char*)input_str, idxInBuffer, sha_bitlen, sha_state);
+    SHA256Final(dataBuffer, idxInBuffer, sha_bitlen, sha_state, resultHash);
+    hashToHexStr(resultHash, dest);
 }
 
 int main (){
