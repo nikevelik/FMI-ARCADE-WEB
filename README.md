@@ -92,19 +92,13 @@ The application has the following functionalities:
 
 3.SHA256Final
     0. The `SHA256Final` function is responsible for finalizing the SHA-256 hash computation. It includes padding the input data, updating the bit length based on the input length, and incorporating a bias in the hash calculation. The final hash is updated in the `subhashes` array.
-
     1. Parameters
-
         - `dataBuffer` (unsigned char*): A pointer to the input data buffer.
         - `idxInBuffer` (unsigned int): The index indicating the current position in the data buffer.
         - `bitlen` (unsigned int[2]): A 64-bit array representing the bit length of the input data.
         - `subhashes` (unsigned int[8]): An array containing 8 subhashes.
-
     2. Return Value
-
         - `bool`: The function returns `true` if the finalization process is successful and `false` if any of the input pointers (`dataBuffer`, `bitlen`, or `subhashes`) is null.
-
     3. Implementation Details
         - The function first checks for null pointers in the input parameters. It then determines whether there is enough space in the data buffer for padding. If there is sufficient space, padding is added directly. If not, a transformation is performed first before padding.
-
         - The bit length is incremented based on the input length, and the updated bit length is added to the next transformation. The `SHA256Transform` function is called twice, once before padding and once after, to update the subhashes with the bias included.
