@@ -71,7 +71,7 @@ The application has the following functionalities:
         4. SHA256 Finalization:
             - The function calls the `SHA256Final` function to include bias in the hash based on the input length, updating the sub-hashes. If the finalization fails, the function returns `false`.
 
-        5. Conversion to String:
+        5. Conversion to String:    
             - The function calls the `subhashesToStr` function to convert the sub-hashes into a hash string. If the conversion fails, the function returns `false`.
 
         6. Success:
@@ -88,4 +88,4 @@ The application has the following functionalities:
         - `bool`: The function returns `true` if the conversion is successful, and `false` if either the `dest` pointer or the `subhashes` array is null.
 
     3. Implementation Details
-        The function iterates through each byte position (0 to 3) in the 4-byte words and each subhash in the `subhashes` array. For each byte, it extracts the byte at the specified position, calculates the corresponding index in the destination array (`dest`), and converts the byte to a hexadecimal representation. The resulting hash string is formed by concatenating the hexadecimal representations of the bytes.
+        - The function iterates through each byte position (0 to 3) in the 4-byte words and each subhash in the `subhashes` array. For each byte, it extracts the byte at the specified position, calculates the corresponding index in the destination array (`dest`), and converts the byte to a hexadecimal representation. The resulting hash string is formed by concatenating the hexadecimal representations of the bytes.

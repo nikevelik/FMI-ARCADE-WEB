@@ -88,6 +88,55 @@ bool compareHashes(const char* hash1, const char* hash2) {
     return 1;
 }
 
+// include bias in the hash, based on the input length, updating the sub-hashes
+bool SHA256Final(unsigned char* dataBuffer, unsigned int idxInBuffer, unsigned int bitlen[2], unsigned int subhashes[8]) {
+    if(!dataBuffer || !bitlen || !subhashes){
+        return false;
+    }
+    unsigned int i = idxInBuffer;
+
+    // bitlen is 64 bit array (8 bytes). it needs 8 bytes of space in the dataBuffer for it to be added in a transformation
+    // make space for bitlen:
+    if (idxInBuffer < 56) {
+        // already has space. do padding until there are exactly 8 spots
+        dataBuffer[i++] = 0x80;
+
+        while (i < 56){
+            dataBuffer[i++] = 0x00;
+        }
+    } else {
+        // not enough space. perform transformation first
+        dataBuffer[i++] = 0x80;
+
+        while (i < 64){
+            dataBuffer[i++] = 0x00;
+        }
+
+        if(!SHA256Transform(dataBuffer, subhashes)){
+            return false;
+        }
+
+        // transformation done. do padding until there are exactly 8 spots
+        for(i = 0; i < 56; i++){
+            dataBuffer[i] = 0;
+        }
+    }
+
+    // increment bitlen for the last (partial block)
+    addWithCarry(bitlen[0], bitlen[1], idxInBuffer * 8);
+    //add bitlen to the next transformation
+    dataBuffer[63] = bitlen[0];
+    dataBuffer[62] = bitlen[0] >> 8;
+    dataBuffer[61] = bitlen[0] >> 16;
+    dataBuffer[60] = bitlen[0] >> 24;
+    dataBuffer[59] = bitlen[1];
+    dataBuffer[58] = bitlen[1] >> 8;
+    dataBuffer[57] = bitlen[1] >> 16;
+    dataBuffer[56] = bitlen[1] >> 24;
+    if(!SHA256Transform(dataBuffer, subhashes)){
+        return false;
+    }
+    return true;
 
 // convert the 8 subparts of (4-byte) words into a whole hash
 bool subhashesToStr(unsigned int subhashes[8], char* dest){
