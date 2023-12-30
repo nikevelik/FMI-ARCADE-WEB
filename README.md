@@ -8,13 +8,6 @@ The application has the following functionalities:
 - hashed message reading - determine if a submitted hash matches the hash of a read message
 
 ## Code documentation:
-### String functions:
-1. strLen
-2. strCat
-3. toHexDigit
-4. memSet 
-- regular string functions, allow independence from library <cstring>
-5. hashToHexStr - convert hash to a string with HEX digits
 
 ### Helper Functions
 1. addWithCarry - Incrementation of a number, handle overflow by incrementing the carry.
@@ -34,8 +27,12 @@ The application has the following functionalities:
 4. Sigma 1: a critical constant function in the SHA-256 algorithm, similar to SIG0. It applies circular right rotations and bit-wise shifting operations to the input 'x' at specified bit positions (17, 19, and 10). SIG1 contributes to the overall robustness and cryptographic properties of the hash function.
 
 ### Constants
-1. Round Constants (K0-K63): SHA-256 uses a set of 64 constant 32-bit words (K0, K1, ..., K63) during the processing of each 512-bit block of the input message. These constants are derived from the fractional parts of the cube roots of the first 64 prime numbers.
-2. HASH_LEN - 64.
+1. ROUND_CONSTANTS (K0-K63): SHA-256 uses a set of 64 constant 32-bit words (K0, K1, ..., K63) during the processing of each 512-bit block of the input message. These constants are derived from the fractional parts of the cube roots of the first 64 prime numbers.
+2. INITIAL_HASHES (0-8): starting values for every (32-bit) hash subpart (they make up the whole 256 bit hash)
+3. HASH_LEN - 64.
+4. HEX_CHARS - string/array of chars that contains the corresponding hex digit to numbers 0-15
+5. MAX_FILESIZE_BYTES - maximum allowed file size in bytes
+
 
 
 ### File I/O
@@ -49,5 +46,4 @@ The application has the following functionalities:
 4. readFileIntoChar - loads File Content into char[] variable. Limited by MAX_FILESIZE_BYTES
 
 ### SHA functions
-1. SHA256Init - initialize helper variables. uses default hashes (hard-coded in the function)
-2. SHA256 - main function. 
+1. SHA256 - main function. 
