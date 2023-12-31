@@ -25,7 +25,8 @@ bool readFile(const char* file, char* dest) {
             return false;
         }
 
-        inFile.seekg(0, ios::beg);
+inFile.seekg(0, ios::beg);
+
         inFile.read(dest, fileSize);
         if (!inFile.good()) {
             inFile.close();

@@ -136,6 +136,16 @@ bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
     return true;
 }
 
+bool SHA256Step(unsigned char* dataBuffer, unsigned int bitlen[2], unsigned int subhashes[8]){
+    // update subhashes based on the block
+    if(!SHA256Transform(dataBuffer, subhashes)){
+        return false;
+    }
+    // update bitlen
+    addWithCarry(bitlen[0], bitlen[1], 512);
+    return true;
+}
+
 // iterate input string, updating the subhashes & bitlen after every 512 bit block (after every 64 chars of the input)
 bool SHA256Update(unsigned char* dataBuffer, const unsigned char* input_str, unsigned int& idxInBuffer, unsigned int bitlen[2], unsigned int subhashes[8]) {
     if(!input_str || !dataBuffer || !bitlen || !subhashes){
@@ -149,15 +159,42 @@ bool SHA256Update(unsigned char* dataBuffer, const unsigned char* input_str, uns
         idxInBuffer++;
         // after the 64-char block is iterated (after every 512 bits buffered)
         if (idxInBuffer == 64) {
-            // update subhashes based on the block
-            if(!SHA256Transform(dataBuffer, subhashes)){
-                return false;
+            if(!SHA256Step(dataBuffer, bitlen, subhashes)){
+               return false;
             }
-            // update bitlen
-            addWithCarry(bitlen[0], bitlen[1], 512);
             // start new block
             idxInBuffer = 0;
         }
+    }
+    return true;
+}
+
+// iterate input string, updating the subhashes & bitlen after every 512 bit block (after every 64 chars of the file)
+bool SHA256FileUpdate(unsigned char* dataBuffer, const char* file, unsigned int& idxInBuffer, unsigned int bitlen[2], unsigned int subhashes[8]) {
+    if(!file || !dataBuffer || !bitlen || !subhashes){
+        return false;
+    }
+
+    {
+        ifstream inFile;
+
+        inFile.open(file);
+        if (!inFile.is_open()) {
+            return false;
+        }
+
+        //while we can read full 64-char block from the file
+        while (inFile.read((char*)dataBuffer, 64)) {
+            // update subhashes and bitlen
+            if(!SHA256Step(dataBuffer, bitlen, subhashes)){
+                return false;
+            }
+        }
+
+        // remember how many chars are in the incomplete last block
+        idxInBuffer = inFile.gcount();
+
+        inFile.close();
     }
     return true;
 }
@@ -325,6 +362,43 @@ bool getHashFromFile(const char* file, char* dest) {
 }
 
 
+// main function for file
+bool SHA256File(const char* file, char* dest) {
+
+    if(!dest){
+        return false;
+    }
+
+    if(!file){
+        dest = nullptr;
+        return false;
+    }
+
+    // container for each 64-symbol block of the input
+    unsigned char dataBuffer[64];
+    // keep track of last iterated symbol in block
+    unsigned int idxInBuffer = 0;
+    // keep track of total bits iterated
+    unsigned int bitlen[2] = {0, 0};
+    // sub-hashes (8 words of 32 bits)
+    unsigned int subhashes[8];
+
+    // initialise subparts
+    for(unsigned int partIdx = 0; partIdx < 8; partIdx ++){
+        subhashes[partIdx] = INITIAL_HASHES[partIdx];
+    }
+    if(!SHA256FileUpdate(dataBuffer, file, idxInBuffer, bitlen, subhashes)){
+        return false;
+    }
+    if(!SHA256Final(dataBuffer, idxInBuffer, bitlen, subhashes)){
+       return false;
+    }
+    if(!subhashesToStr(subhashes, dest)){
+        return false;
+    }
+    return true;
+}
+
 int main (){
     char resultHashResult[65] = "";
     if(SHA256("1", resultHashResult)){
@@ -347,6 +421,17 @@ int main (){
 
     }else{
         cout << endl << "Error reading";
+    }
+
+    if(SHA256File("1.txt", resultHashResult)){
+        cout << endl << resultHashResult << endl;
+    }else{
+        cout << endl << "returned 0";
+    }
+    if(SHA256("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF", resultHashResult)){
+        cout << endl << resultHashResult << endl;
+    }else{
+        cout << endl << "returned 0" << endl;
     }
 
     return 0;
