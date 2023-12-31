@@ -88,6 +88,50 @@ bool compareHashes(const char* hash1, const char* hash2) {
     return 1;
 }
 
+
+// hashing (with sha256 algorithm) transformation on the 8 subhashes, based on the data
+// data is an array of 64 elements with values 0-256
+bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
+    if(!data || !subhashes){
+        return false;
+    }
+
+    // index of (32-bit) word in message schedule
+    // index of character in data input
+    // message schedule - expansion of data input
+    unsigned int wordIdx, charIdx, messageSchedule[64];
+    unsigned int subhashIncrement[8];
+
+    for(unsigned int partIdx = 0; partIdx < 8; partIdx ++){
+        subhashIncrement[partIdx] = subhashes[partIdx];
+    }
+
+    for (wordIdx = 0, charIdx = 0; wordIdx < 16; wordIdx++, charIdx += 4){
+        messageSchedule[wordIdx] = (data[charIdx] << 24) | (data[charIdx + 1] << 16) | (data[charIdx + 2] << 8) | (data[charIdx + 3]);
+    }
+    for (; wordIdx < 64; wordIdx++){
+        messageSchedule[wordIdx] = sigma1(messageSchedule[wordIdx - 2]) + messageSchedule[wordIdx - 7] + sigma0(messageSchedule[wordIdx - 15]) + messageSchedule[wordIdx - 16];
+    }
+    for (wordIdx = 0; wordIdx < 64; ++wordIdx) {
+        unsigned int tmp1 = subhashIncrement[7] + expansionPermutation1(subhashIncrement[4]) + getChooseBitByBit(subhashIncrement[4], subhashIncrement[5], subhashIncrement[6]) + ROUND_CONSTANTS[wordIdx] + messageSchedule[wordIdx];
+        unsigned int tmp2 = expansionPermutation0(subhashIncrement[0]) + getBitwiseMajority(subhashIncrement[0], subhashIncrement[1], subhashIncrement[2]);
+        subhashIncrement[7] = subhashIncrement[6];
+        subhashIncrement[6] = subhashIncrement[5];
+        subhashIncrement[5] = subhashIncrement[4];
+        subhashIncrement[4] = subhashIncrement[3] + tmp1;
+        subhashIncrement[3] = subhashIncrement[2];
+        subhashIncrement[2] = subhashIncrement[1];
+        subhashIncrement[1] = subhashIncrement[0];
+        subhashIncrement[0] = tmp1 + tmp2;
+    }
+
+    for(unsigned int partIdx = 0; partIdx < 8; partIdx++){
+        subhashes[partIdx] += subhashIncrement[partIdx];
+    }
+    return true;
+}
+
+
 // include bias in the hash, based on the input length, updating the sub-hashes
 bool SHA256Final(unsigned char* dataBuffer, unsigned int idxInBuffer, unsigned int bitlen[2], unsigned int subhashes[8]) {
     if(!dataBuffer || !bitlen || !subhashes){
@@ -137,7 +181,7 @@ bool SHA256Final(unsigned char* dataBuffer, unsigned int idxInBuffer, unsigned i
         return false;
     }
     return true;
-
+}
 // convert the 8 subparts of (4-byte) words into a whole hash
 bool subhashesToStr(unsigned int subhashes[8], char* dest){
     if(!dest || !subhashes){
