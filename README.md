@@ -122,3 +122,23 @@ The application has the following functionalities:
         - The function begins by validating the input parameters. It then initializes variables for the index of the 32-bit word in the message schedule (`wordIdx`), the index of the character in the input data (`charIdx`), and the message schedule array (`messageSchedule`). Additionally, it sets up an array (`subhashIncrement`) to store values added to the subhashes.
 
         - The input data is processed and expanded into the message schedule, following the SHA-256 algorithm specifications. The function then performs a series of calculations to determine the values to add to the subhashes, based on the previous values, round constants, and the message schedule. The subhashes are updated accordingly in each iteration.
+
+5. SHA256Update Function Documentation
+
+    0. The `SHA256Update` function is designed to iteratively update the SHA-256 hash state based on the input string provided. The function processes the input string in 512-bit blocks (64 characters) and updates the internal state, including the subhashes and bit length.
+
+    1. Parameters
+
+        - `dataBuffer` (unsigned char*): A buffer to store the input data in 512-bit blocks.
+        - `input_str` (const unsigned char*): The input string to be processed.
+        - `idxInBuffer` (unsigned int&): A reference to the index within the data buffer indicating the current position.
+        - `bitlen` (unsigned int[2]): An array representing the bit length of the input data.
+        - `subhashes` (unsigned int[8]): An array representing the current state of the SHA-256 hash.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the processing is successful, and `false` if any of the input parameters are null.
+
+    3. Implementation Details
+
+        - The function iterates through each character in the input string, updating the data buffer. After processing each 512-bit block, the function calls `SHA256Transform` to update the subhashes based on the block data. The bit length is also updated, and a new block is started.

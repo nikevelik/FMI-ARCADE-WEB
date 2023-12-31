@@ -136,6 +136,31 @@ bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
     return true;
 }
 
+// iterate input string, updating the subhashes & bitlen after every 512 bit block (after every 64 chars of the input)
+bool SHA256Update(unsigned char* dataBuffer, const unsigned char* input_str, unsigned int& idxInBuffer, unsigned int bitlen[2], unsigned int subhashes[8]) {
+    if(!input_str || !dataBuffer || !bitlen || !subhashes){
+        return false;
+    }
+
+    // iterate the input string
+    for (unsigned int i = 0; input_str[i] != '\0'; ++i) {
+        // save current block data into the buffer
+        dataBuffer[idxInBuffer] = input_str[i];
+        idxInBuffer++;
+        // after the 64-char block is iterated (after every 512 bits buffered)
+        if (idxInBuffer == 64) {
+            // update subhashes based on the block
+            if(!SHA256Transform(dataBuffer, subhashes)){
+                return false;
+            }
+            // update bitlen
+            addWithCarry(bitlen[0], bitlen[1], 512);
+            // start new block
+            idxInBuffer = 0;
+        }
+    }
+    return true;
+}
 
 // include bias in the hash, based on the input length, updating the sub-hashes
 bool SHA256Final(unsigned char* dataBuffer, unsigned int idxInBuffer, unsigned int bitlen[2], unsigned int subhashes[8]) {
