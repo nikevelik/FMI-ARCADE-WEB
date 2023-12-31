@@ -136,6 +136,7 @@ bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
     return true;
 }
 
+// update subhashes and bitlen
 bool SHA256Step(unsigned char* dataBuffer, unsigned int bitlen[2], unsigned int subhashes[8]){
     // update subhashes based on the block
     if(!SHA256Transform(dataBuffer, subhashes)){
@@ -400,38 +401,52 @@ bool SHA256File(const char* file, char* dest) {
 }
 
 int main (){
-    char resultHashResult[65] = "";
-    if(SHA256("1", resultHashResult)){
-        cout << endl << resultHashResult << endl;
+    char hashedString[HASH_LEN + 1], loadedHash[HASH_LEN + 1], hashedFile[HASH_LEN + 1], hashedStringLikeFile[HASH_LEN + 1];
+    char * str1 = "1", * file1 = "1.txt", * file2 = "hash1.txt", * strLikeFile = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+    if(SHA256(str1, hashedString)){
+        cout << endl << "SHA256('" << str1 << "') -> " << hashedString << endl;
+    }else{
+        cout << endl << "Error regular hashing" << endl;
+    }
+
+    if(saveHashToFile(hashedString, file2)){
+        cout << endl << "hash '" << hashedString << "' saved to file " << file2 << endl;
+    }else{
+        cout << endl << "Error saving hash to file" << endl;
+    }
+
+
+    if(getHashFromFile(file2, loadedHash)){
+        cout << endl << "Hash '" << loadedHash << "'" << " read from file " << file2 << endl;
+    }else{
+        cout << endl << "Error reading hash from file" << endl;
+    }
+    if(SHA256File(file1, hashedFile)){
+        cout << endl << "SHA256('" << file1 << "') -> " << hashedFile << endl;
+    }else{
+        cout << endl << "Error hashing file" << endl;
+    }
+    if(SHA256(strLikeFile, hashedStringLikeFile)){
+        cout << endl << "SHA256('" << strLikeFile << "') -> " << hashedStringLikeFile << endl;
     }else{
         cout << endl << "Error hashing" << endl;
     }
-
-    if(saveHashToFile(resultHashResult, "hash1.txt")){
-        cout << endl << "hash saved to file" << endl;
+    if(compareHashes(loadedHash, hashedString)){
+        cout << endl << "Hashes: \n " << loadedHash << " and \n" << hashedString << "\nmatch!" << endl;
     }else{
-        cout << endl << "Error saving" << endl;
+        cout << endl << "Hashes: \n" << loadedHash << " and \n" << hashedString << "\ndo not match." << endl;
     }
 
-
-    char loadedHash[HASH_LEN];
-
-    if(getHashFromFile("hash1.txt", loadedHash)){
-        cout << endl << "String read from file: " << loadedHash << endl;
-
+    if(compareHashes(hashedFile, hashedStringLikeFile)){
+        cout << endl << "Hashes: \n" << hashedFile << " and \n" << hashedStringLikeFile << "\nmatch!" << endl;
     }else{
-        cout << endl << "Error reading";
+        cout << endl << "Hashes: \n" << hashedFile << " and \n" << hashedStringLikeFile << "\ndo not match." << endl;
     }
 
-    if(SHA256File("1.txt", resultHashResult)){
-        cout << endl << resultHashResult << endl;
+    if(compareHashes(hashedFile, hashedString)){
+        cout << endl << "Hashes: \n" << hashedFile << " and \n" << hashedString << "\nmatch!" << endl;
     }else{
-        cout << endl << "returned 0";
-    }
-    if(SHA256("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF", resultHashResult)){
-        cout << endl << resultHashResult << endl;
-    }else{
-        cout << endl << "returned 0" << endl;
+        cout << endl << "Hashes: \n" << hashedFile << " and \n" << hashedString << "\ndo not match." << endl;
     }
 
     return 0;
