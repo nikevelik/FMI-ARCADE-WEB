@@ -88,7 +88,6 @@ bool compareHashes(const char* hash1, const char* hash2) {
     return 1;
 }
 
-
 // hashing (with sha256 algorithm) transformation on the 8 subhashes, based on the data
 // data is an array of 64 elements with values 0-256
 bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
@@ -100,18 +99,23 @@ bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
     // index of character in data input
     // message schedule - expansion of data input
     unsigned int wordIdx, charIdx, messageSchedule[64];
+    // values to add to subhashes
     unsigned int subhashIncrement[8];
 
+    // set starting value to currentsubhashes
     for(unsigned int partIdx = 0; partIdx < 8; partIdx ++){
         subhashIncrement[partIdx] = subhashes[partIdx];
     }
 
+    // put the data in the message schedule (64 elements x 8bits go to (the first) 16 elements x 32 bits)
     for (wordIdx = 0, charIdx = 0; wordIdx < 16; wordIdx++, charIdx += 4){
         messageSchedule[wordIdx] = (data[charIdx] << 24) | (data[charIdx + 1] << 16) | (data[charIdx + 2] << 8) | (data[charIdx + 3]);
     }
+    // fill up the rest (48) elements with values, based on the first 16.
     for (; wordIdx < 64; wordIdx++){
         messageSchedule[wordIdx] = sigma1(messageSchedule[wordIdx - 2]) + messageSchedule[wordIdx - 7] + sigma0(messageSchedule[wordIdx - 15]) + messageSchedule[wordIdx - 16];
     }
+    // calculate values to add to subhashes, based on the 1.previous values, 2. round constants, 3. message schedule
     for (wordIdx = 0; wordIdx < 64; ++wordIdx) {
         unsigned int tmp1 = subhashIncrement[7] + expansionPermutation1(subhashIncrement[4]) + getChooseBitByBit(subhashIncrement[4], subhashIncrement[5], subhashIncrement[6]) + ROUND_CONSTANTS[wordIdx] + messageSchedule[wordIdx];
         unsigned int tmp2 = expansionPermutation0(subhashIncrement[0]) + getBitwiseMajority(subhashIncrement[0], subhashIncrement[1], subhashIncrement[2]);
@@ -125,6 +129,7 @@ bool SHA256Transform(const unsigned char* data, unsigned int subhashes[8]) {
         subhashIncrement[0] = tmp1 + tmp2;
     }
 
+    //update subhashes
     for(unsigned int partIdx = 0; partIdx < 8; partIdx++){
         subhashes[partIdx] += subhashIncrement[partIdx];
     }
