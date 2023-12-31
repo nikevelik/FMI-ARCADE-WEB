@@ -103,3 +103,22 @@ The application has the following functionalities:
     3. Implementation Details
         - The function first checks for null pointers in the input parameters. It then determines whether there is enough space in the data buffer for padding. If there is sufficient space, padding is added directly. If not, a transformation is performed first before padding.
         - The bit length is incremented based on the input length, and the updated bit length is added to the next transformation. The `SHA256Transform` function is called twice, once before padding and once after, to update the subhashes with the bias included.
+
+4. SHA256Transform Function Documentation
+
+    0. The `SHA256Transform` function implements the SHA-256 hashing algorithm to transform an array of input data into 8 subhashes. The input data is represented as an array of 64 elements, each with values ranging from 0 to 256. The resulting subhashes are stored in the provided `subhashes` array.
+
+    1. Parameters
+
+        - `data` (const unsigned char*): A pointer to the input data array containing 64 elements with values in the range 0-256.
+        - `subhashes` (unsigned int[8]): An array representing the 8 subhashes that will be updated by the transformation.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the transformation is successful, and `false` if either the `data` pointer or the `subhashes` array is null.
+
+    3. Implementation Details
+
+        - The function begins by validating the input parameters. It then initializes variables for the index of the 32-bit word in the message schedule (`wordIdx`), the index of the character in the input data (`charIdx`), and the message schedule array (`messageSchedule`). Additionally, it sets up an array (`subhashIncrement`) to store values added to the subhashes.
+
+        - The input data is processed and expanded into the message schedule, following the SHA-256 algorithm specifications. The function then performs a series of calculations to determine the values to add to the subhashes, based on the previous values, round constants, and the message schedule. The subhashes are updated accordingly in each iteration.
