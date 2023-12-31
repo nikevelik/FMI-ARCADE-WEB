@@ -85,7 +85,7 @@ bool compareHashes(const char* hash1, const char* hash2) {
             return false;
         }
     }
-    return 1;
+    return true;
 }
 
 // hashing (with sha256 algorithm) transformation on the 8 subhashes, based on the data
@@ -323,6 +323,7 @@ bool getHashFromFile(const char* file, char* dest) {
     }
     return true;
 }
+
 
 int main (){
     char resultHashResult[65] = "";

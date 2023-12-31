@@ -76,9 +76,23 @@ The application has the following functionalities:
 
 
 
-3. compareHashes - check if hashes match or not
+3. compareHashes
 
-4. readFileIntoChar - loads File Content into char[] variable. Limited by MAX_FILESIZE_BYTES
+    0. The `compareHashes` function is designed to compare two hash strings, `hash1` and `hash2`, to determine if they match. The function returns `true` if the hashes are identical and `false` otherwise.
+
+    1. Parameters
+
+        - `hash1` (const char*): A pointer to the first hash string to be compared.
+        - `hash2` (const char*): A pointer to the second hash string to be compared.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the hash strings match, and `false` if either `hash1` or `hash2` is null or if the hash strings differ.
+
+    3. Implementation Details
+
+        - The function iterates through each character in the hash strings and checks if the corresponding characters at the same position are equal. If any pair of characters differs, the function returns `false`, indicating that the hashes do not match. If the loop completes without finding any differences, the function returns `true`.
+
 
 ### SHA functions
 1. SHA256 

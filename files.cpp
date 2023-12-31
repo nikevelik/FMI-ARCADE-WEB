@@ -12,19 +12,29 @@ bool readFile(const char* file, char* dest) {
     if(!dest || !file){
         return 0;
     }
-    dest[0] = '\0';
-    ifstream inFile(file, ios::ate | ios::binary);
-    if (!inFile.is_open()) {
-        return false;
+    {
+        ifstream inFile;
+
+        inFile.open(file, ios::ate | ios::binary);
+        if (!inFile.is_open()) {
+            return false;
+        }
+
+        streamsize fileSize = inFile.tellg();
+        if (fileSize > MAX_FILESIZE_BYTES) {
+            return false;
+        }
+
+        inFile.seekg(0, ios::beg);
+        inFile.read(dest, fileSize);
+        if (!inFile.good()) {
+            inFile.close();
+            return false;
+        }
+
+        dest[fileSize] = '\0';
+        inFile.close();
     }
-    streamsize fileSize = inFile.tellg();
-    inFile.seekg(0, ios::beg);
-    if (fileSize > MAX_FILESIZE_BYTES) {
-        return false;
-    }
-    inFile.read(dest, fileSize);
-    dest[fileSize] = '\0';
-    inFile.close();
     return true;
 }
 
