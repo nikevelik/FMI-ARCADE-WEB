@@ -37,7 +37,24 @@ The application has the following functionalities:
 
 ### File I/O
 
-1. saveHashToFile - saves message of length HASH_LEN (str) to a file (filename)
+1. saveHashToFile
+
+
+    0. The `saveHashToFile` function is designed to save a hash string, represented by `hash_str`, to a file specified by the `file` parameter. The hash string is assumed to have a length of `HASH_LEN` characters. The function utilizes the C++ standard library's `ofstream` to perform binary file output.
+
+    1. Parameters
+
+        - `hash_str` (const char*): A pointer to the hash string to be saved to the file.
+        - `file` (const char*): A pointer to the file path where the hash string will be saved.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the saving process is successful, and `false` if either the `hash_str` or `file` pointer is null, the file cannot be opened, or there is an issue writing the hash string to the file.
+
+    3. Implementation Details
+
+        - The function begins by checking for null pointers in the `hash_str` and `file` parameters. If either pointer is null, the function returns `false`. The hash string is then written to the specified file using an `ofstream` object. The file is opened in binary mode, and the hash string is written using the `write` method. The function checks if the write operation was successful and closes the file accordingly.
+
 
 2. getHashFromFile - gets message from file and saves it to dest.
 
@@ -46,7 +63,7 @@ The application has the following functionalities:
 4. readFileIntoChar - loads File Content into char[] variable. Limited by MAX_FILESIZE_BYTES
 
 ### SHA functions
-1. SHA256 - main function. 
+1. SHA256 
     0. The `SHA256` function is the main component of the SHA-256 hashing algorithm, which generates a secure 256-bit hash (32-byte hash) from the given input string. The resulting hash is stored in the character array provided by the `dest` parameter.
 
     1. Parameters
@@ -79,7 +96,7 @@ The application has the following functionalities:
 
 
 
-2. subhashesToStr - convert the 8 subparts of (4-byte) words into a whole hash
+2. subhashesToStr
     0. The `subhashesToStr` function is designed to convert an array of 8 subhashes, each represented as a 4-byte word, into a single hash string. The resulting hash string is stored in a character array provided as the `dest` parameter. The hash string is represented in hexadecimal format.
     1. Parameters
         - `subhashes` (unsigned int[8]): An array containing 8 subhashes, each represented as a 4-byte word.
@@ -90,7 +107,7 @@ The application has the following functionalities:
     3. Implementation Details
         - The function iterates through each byte position (0 to 3) in the 4-byte words and each subhash in the `subhashes` array. For each byte, it extracts the byte at the specified position, calculates the corresponding index in the destination array (`dest`), and converts the byte to a hexadecimal representation. The resulting hash string is formed by concatenating the hexadecimal representations of the bytes.
 
-3. SHA256Final - include bias in the hash, based on the input length, updating the sub-hashes
+3. SHA256Final
     0. The `SHA256Final` function is responsible for finalizing the SHA-256 hash computation. It includes padding the input data, updating the bit length based on the input length, and incorporating a bias in the hash calculation. The final hash is updated in the `subhashes` array.
     
     1. Parameters
@@ -104,7 +121,7 @@ The application has the following functionalities:
         - The function first checks for null pointers in the input parameters. It then determines whether there is enough space in the data buffer for padding. If there is sufficient space, padding is added directly. If not, a transformation is performed first before padding.
         - The bit length is incremented based on the input length, and the updated bit length is added to the next transformation. The `SHA256Transform` function is called twice, once before padding and once after, to update the subhashes with the bias included.
 
-4. SHA256Transform Function Documentation
+4. SHA256Transform
 
     0. The `SHA256Transform` function implements the SHA-256 hashing algorithm to transform an array of input data into 8 subhashes. The input data is represented as an array of 64 elements, each with values ranging from 0 to 256. The resulting subhashes are stored in the provided `subhashes` array.
 
@@ -123,7 +140,7 @@ The application has the following functionalities:
 
         - The input data is processed and expanded into the message schedule, following the SHA-256 algorithm specifications. The function then performs a series of calculations to determine the values to add to the subhashes, based on the previous values, round constants, and the message schedule. The subhashes are updated accordingly in each iteration.
 
-5. SHA256Update Function Documentation
+5. SHA256Update
 
     0. The `SHA256Update` function is designed to iteratively update the SHA-256 hash state based on the input string provided. The function processes the input string in 512-bit blocks (64 characters) and updates the internal state, including the subhashes and bit length.
 

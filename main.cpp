@@ -212,6 +212,7 @@ bool SHA256Final(unsigned char* dataBuffer, unsigned int idxInBuffer, unsigned i
     }
     return true;
 }
+
 // convert the 8 subparts of (4-byte) words into a whole hash
 bool subhashesToStr(unsigned int subhashes[8], char* dest){
     if(!dest || !subhashes){
@@ -235,6 +236,7 @@ bool subhashesToStr(unsigned int subhashes[8], char* dest){
     dest[64] = '\0';
     return true;
 }
+
 // main SHA function
 bool SHA256(const char* input_str, char* dest) {
     if(!dest){
@@ -263,6 +265,31 @@ bool SHA256(const char* input_str, char* dest) {
     if(!subhashesToStr(subhashes, dest)){
         return false;
     }
+    return true;
+}
+
+// saves message of length HASH_LEN (hash_str) to a file (file)
+bool saveHashToFile(const char* hash_str, const char* file) {
+    if(!hash_str || !file){
+        return false;
+    }
+    {
+        std::ofstream outFile;
+
+        outFile.open(file, std::ios::binary);
+        if (!outFile.is_open()) {
+            return false;
+        }
+
+        outFile.write(hash_str, HASH_LEN);
+        if (!outFile.good()) {
+            outFile.close();
+            return false;
+        }
+
+        outFile.close();
+    }
+
     return true;
 }
 
