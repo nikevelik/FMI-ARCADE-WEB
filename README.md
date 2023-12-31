@@ -128,6 +128,37 @@ The application has the following functionalities:
 
 
 
+2. # SHA256File Function Documentation
+
+    0. The `SHA256File` function serves as the main entry point for computing the SHA-256 hash of a file. It takes the file path as input, processes the file in 64-symbol blocks, and produces the final hash, which is then stored in the character array provided as the `dest` parameter.
+
+    1. Parameters
+
+        - `file` (const char*): The path to the file for which the SHA-256 hash is to be computed.
+        - `dest` (char*): A pointer to the destination character array where the resulting hash string will be stored.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the SHA-256 hash computation is successful, and `false` under the following conditions:
+        - If the `dest` pointer is null.
+        - If the `file` pointer is null.
+        - If there is an issue with the SHA-256 file update process.
+        - If there is an issue with the finalization of the SHA-256 computation.
+        - If there is an issue converting the subhashes to a hash string.
+
+    3. Implementation Details
+
+        The function utilizes a series of variables to manage the file processing and hash computation:
+        - `dataBuffer`: A container for each 64-symbol block of the input file.
+        - `idxInBuffer`: Keeps track of the last iterated symbol in the block.
+        - `bitlen`: An array to keep track of the total bits iterated.
+        - `subhashes`: An array representing the sub-hashes, initialized with predefined values.
+
+        The function initializes the sub-hashes and proceeds to update them through the `SHA256FileUpdate` function, which processes the file in blocks. After the file is fully processed, the final SHA-256 computation is performed using the `SHA256Final` function. Finally, the resulting subhashes are converted to a hash string using the `subhashesToStr` function.
+
+
+
+
 2. subhashesToStr
     0. The `subhashesToStr` function is designed to convert an array of 8 subhashes, each represented as a 4-byte word, into a single hash string. The resulting hash string is stored in a character array provided as the `dest` parameter. The hash string is represented in hexadecimal format.
     1. Parameters
@@ -172,22 +203,64 @@ The application has the following functionalities:
 
         - The input data is processed and expanded into the message schedule, following the SHA-256 algorithm specifications. The function then performs a series of calculations to determine the values to add to the subhashes, based on the previous values, round constants, and the message schedule. The subhashes are updated accordingly in each iteration.
 
-5. SHA256Update
+5. SHA256Step
 
-    0. The `SHA256Update` function is designed to iteratively update the SHA-256 hash state based on the input string provided. The function processes the input string in 512-bit blocks (64 characters) and updates the internal state, including the subhashes and bit length.
+    0. The `SHA256Step` function performs a step in the SHA-256 hashing algorithm. It updates the state of the hash, represented by the `subhashes` array, based on the data provided in the `dataBuffer`. Additionally, it increments the total bit length processed so far, stored in the `bitlen` array.
 
     1. Parameters
 
-        - `dataBuffer` (unsigned char*): A buffer to store the input data in 512-bit blocks.
-        - `input_str` (const unsigned char*): The input string to be processed.
-        - `idxInBuffer` (unsigned int&): A reference to the index within the data buffer indicating the current position.
-        - `bitlen` (unsigned int[2]): An array representing the bit length of the input data.
-        - `subhashes` (unsigned int[8]): An array representing the current state of the SHA-256 hash.
+        - `dataBuffer` (unsigned char*): A pointer to the input data block to be processed.
+        - `bitlen` (unsigned int[2]): An array representing the total bit length processed so far. It is updated during the function execution.
+        - `subhashes` (unsigned int[8]): An array representing the current state of the hash. It is updated based on the input data.
 
     2. Return Value
 
-        - `bool`: The function returns `true` if the processing is successful, and `false` if any of the input parameters are null.
+        - `bool`: The function returns `true` if the step is successfully completed, and `false` if the underlying SHA256 transformation (`SHA256Transform`) fails.
 
     3. Implementation Details
 
-        - The function iterates through each character in the input string, updating the data buffer. After processing each 512-bit block, the function calls `SHA256Transform` to update the subhashes based on the block data. The bit length is also updated, and a new block is started.
+        1. The function first updates the hash state (`subhashes`) by calling the `SHA256Transform` function with the provided `dataBuffer`. If the transformation fails, the function returns `false`.
+
+        2. It then increments the total bit length processed (`bitlen`) by adding 512 bits. This accounts for the 512 bits processed in the current data block.
+
+        3. The function returns `true` to indicate a successful step in the SHA-256 algorithm.
+
+6.  SHA256Update 
+
+    0. The `SHA256Update` function is responsible for iterating through an input string and updating the SHA-256 subhashes and bit length after processing every 512-bit block (64 characters) of the input. The function maintains a data buffer (`dataBuffer`) to accumulate the input block before passing it to the SHA-256 stepping function (`SHA256Step`). The `idxInBuffer` parameter keeps track of the current position in the buffer.
+
+    1. Parameters
+
+        - `dataBuffer` (unsigned char*): A buffer to accumulate the input string in 512-bit blocks.
+        - `input_str` (const unsigned char*): The input string to be processed.
+        - `idxInBuffer` (unsigned int&): A reference to the current index in the data buffer.
+        - `bitlen` (unsigned int[2]): An array containing the current bit length of the input message.
+        - `subhashes` (unsigned int[8]): An array representing the SHA-256 subhashes.
+
+    2. Return Value
+        - `bool`: The function returns `true` if the update is successful, and `false` if any of the input parameters (`input_str`, `dataBuffer`, `bitlen`, or `subhashes`) is null or if the SHA256Step function fails.
+
+    3. Implementation Details
+
+        - The function iterates through each character in the input string, saving it to the data buffer and updating the index (`idxInBuffer`). After every 64 characters (512 bits), it invokes the `SHA256Step` function to update the SHA-256 subhashes and bit length. The process continues until the entire input string is processed.
+
+7. SHA256FileUpdate
+    0. The `SHA256FileUpdate` function is responsible for iterating through the input string represented by a file, updating the subhashes and bit length after processing each 512-bit block (64 characters) from the file. This function utilizes the `SHA256Step` function to perform the hash computation for each block.
+
+    1. Parameters
+
+        - `dataBuffer` (unsigned char*): A buffer used to store the input data read from the file.
+        - `file` (const char*): The path to the input file to be processed.
+        - `idxInBuffer` (unsigned int&): A reference to a variable that stores the number of characters in the incomplete last block.
+        - `bitlen` (unsigned int[2]): An array representing the bit length of the input data processed so far.
+        - `subhashes` (unsigned int[8]): An array containing 8 subhashes used in the hash computation.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the file is successfully opened and processed, updating the subhashes and bit length for each 512-bit block. It returns `false` if any of the input parameters are null or if an error occurs during file processing.
+
+    3. Implementation Details
+
+        - The function opens the specified file and reads data from it in 64-character (512-bit) blocks. For each block, the `SHA256Step` function is called to update the subhashes and bit length. The index of the incomplete last block (`idxInBuffer`) is then stored for future reference.
+
+        - After processing the entire file, the file stream is closed.
