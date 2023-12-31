@@ -274,9 +274,9 @@ bool saveHashToFile(const char* hash_str, const char* file) {
         return false;
     }
     {
-        std::ofstream outFile;
+        ofstream outFile;
 
-        outFile.open(file, std::ios::binary);
+        outFile.open(file, ios::binary);
         if (!outFile.is_open()) {
             return false;
         }
@@ -298,7 +298,13 @@ int main (){
     if(SHA256("1", resultHashResult)){
         cout << endl << resultHashResult << endl;
     }else{
-        cout << endl << "returned 0";
+        cout << endl << "returned 0" << endl;
+    }
+
+    if(saveHashToFile(resultHashResult, "hash1.txt")){
+        cout << endl << "hash saved to file" << endl;
+    }else{
+        cout << endl << "error somewhere" << endl;
     }
 
     return 0;

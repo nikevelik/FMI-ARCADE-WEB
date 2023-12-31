@@ -6,31 +6,6 @@ unsigned int MAX_FILESIZE_BYTES = 1024;
 
 const unsigned int HASH_LEN = 64;
 
-// saves message of length HASH_LEN (hash_str) to a file (file)
-bool saveHashToFile(const char* hash_str, const char* file) {
-    if(!hash_str || !file){
-        return false;
-    }
-    {
-        std::ofstream outFile;
-
-        outFile.open(file, std::ios::binary);
-        if (!outFile.is_open()) {
-            return false;
-        }
-
-        outFile.write(hash_str, HASH_LEN);
-        if (!outFile.good()) {
-            outFile.close();
-            return false;
-        }
-
-        outFile.close();
-    }
-
-    return true;
-}
-
 
 // gets message from file and saves it to dest.
 void getHashFromFile(const char* fileName, char* dest) {
