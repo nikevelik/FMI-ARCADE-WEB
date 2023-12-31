@@ -56,7 +56,25 @@ The application has the following functionalities:
         - The function begins by checking for null pointers in the `hash_str` and `file` parameters. If either pointer is null, the function returns `false`. The hash string is then written to the specified file using an `ofstream` object. The file is opened in binary mode, and the hash string is written using the `write` method. The function checks if the write operation was successful and closes the file accordingly.
 
 
-2. getHashFromFile - gets message from file and saves it to dest.
+2. getHashFromFile 
+
+
+    0. The `getHashFromFile` function is designed to read the first `HASH_LEN` symbols from a specified file and store them in a character array provided as the `dest` parameter. The function returns a boolean value, indicating whether the operation was successful or not.
+
+    1. Parameters
+
+        - `file` (const char*): The path to the file from which the hash message will be read.
+        - `dest` (char*): A pointer to the destination character array where the hash message will be stored.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the operation is successful, and `false` if either the `file` path or the `dest` pointer is null, the file cannot be opened, or if the read operation fails.
+
+    3. Implementation Details
+
+        - The function uses an `ifstream` to open the specified file. If the file opening is successful, it reads the first `HASH_LEN` symbols from the file into the `dest` array. The function checks for errors during the read operation and ensures that the read length matches the expected `HASH_LEN`. If any error occurs, the function sets `dest[0]` to the null terminator and returns `false`. Otherwise, it adds a null terminator at the end of the hash message in `dest` and closes the file.
+
+
 
 3. compareHashes - check if hashes match or not
 

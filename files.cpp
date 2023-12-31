@@ -7,23 +7,6 @@ unsigned int MAX_FILESIZE_BYTES = 1024;
 const unsigned int HASH_LEN = 64;
 
 
-// gets message from file and saves it to dest.
-void getHashFromFile(const char* fileName, char* dest) {
-    if(!fileName | !dest){
-        return;
-    }
-    dest[0] = '\0';
-    ifstream file(fileName);
-    if (!file.is_open()) {
-        cerr << "Error: Unable to open file " << fileName << endl;
-        return;
-    }
-    file.read(dest, HASH_LEN);
-    dest[HASH_LEN] = '\0';
-    file.close();
-}
-
-
 
 bool readFile(const char* file, char* dest) {
     if(!dest || !file){
@@ -47,25 +30,7 @@ bool readFile(const char* file, char* dest) {
 
 int main(){
 
-    const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
-
-    const char* file = "output.txt";
-
-    if(saveHashToFile(myString, file)){
-        cout << "success";
-    }else{
-        cout << "error somewhere";
-    }
-
-/*
-    const char* fileName = "output.txt";
-    char dest[HASH_LEN + 1];
-
-    getHashFromFile(fileName, dest);
-
-     cout << "String read from file: " << dest << endl;
-
-
+    /*
     char str1[HASH_LEN+1] = "111111This is a 64-symbol string that will be saved to a file.12";  // Replace with your own data
     char str2[HASH_LEN+1] = "111111This is a 64-symbol string that will be saved to a file.12";  // Replace with your own data
 

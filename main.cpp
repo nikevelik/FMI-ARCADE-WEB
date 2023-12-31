@@ -293,18 +293,59 @@ bool saveHashToFile(const char* hash_str, const char* file) {
     return true;
 }
 
+// gets hash message (first HASH_LEN symbols) from file and saves it to dest.
+bool getHashFromFile(const char* file, char* dest) {
+    if(!file || !dest){
+        return false;
+    }
+    {
+        ifstream inFile;
+        inFile.open(file);
+        if (!inFile.is_open()) {
+            return false;
+        }
+
+        inFile.read(dest, HASH_LEN);
+        if (!inFile.good()) {
+            inFile.close();
+            return false;
+        }
+
+        if (inFile.gcount() < HASH_LEN) {
+            inFile.close();
+            dest[0] = '\0';
+            return false;
+        }
+
+
+        dest[HASH_LEN] = '\0';
+        inFile.close();
+    }
+    return true;
+}
+
 int main (){
     char resultHashResult[65] = "";
     if(SHA256("1", resultHashResult)){
         cout << endl << resultHashResult << endl;
     }else{
-        cout << endl << "returned 0" << endl;
+        cout << endl << "Error hashing" << endl;
     }
 
     if(saveHashToFile(resultHashResult, "hash1.txt")){
         cout << endl << "hash saved to file" << endl;
     }else{
-        cout << endl << "error somewhere" << endl;
+        cout << endl << "Error saving" << endl;
+    }
+
+
+    char loadedHash[HASH_LEN];
+
+    if(getHashFromFile("hash1.txt", loadedHash)){
+        cout << endl << "String read from file: " << loadedHash << endl;
+
+    }else{
+        cout << endl << "Error reading";
     }
 
     return 0;

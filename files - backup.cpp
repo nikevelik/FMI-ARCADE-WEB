@@ -12,9 +12,9 @@ bool saveHashToFile(const char* hash_str, const char* file) {
         return false;
     }
     {
-        std::ofstream outFile;
+        ofstream outFile;
 
-        outFile.open(file, std::ios::binary);
+        outFile.open(file);
         if (!outFile.is_open()) {
             return false;
         }
@@ -74,12 +74,21 @@ int main(){
 
     const char* myString = "111111This is a 64-symbol string that will be saved to a file.1234567890123456789012345678901234567890123456789012345678901234";
 
-    const char* file = "output.txt";
+    const char* file = "hash1.txt";
+
+    char loadedHash[HASH_LEN];
 
     if(saveHashToFile(myString, file)){
         cout << "success";
     }else{
         cout << "error somewhere";
+    }
+
+    if(getHashFromFile(file, loadedHash)){
+        cout << "String read from file: " << loadedHash << endl;
+
+    }else{
+        cout << "Error somewhere";
     }
 
 /*
