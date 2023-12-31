@@ -31,7 +31,6 @@ The application has the following functionalities:
 2. INITIAL_HASHES (0-8): starting values for every (32-bit) hash subpart (they make up the whole 256 bit hash)
 3. HASH_LEN - 64.
 4. HEX_CHARS - string/array of chars that contains the corresponding hex digit to numbers 0-15
-5. MAX_FILESIZE_BYTES - maximum allowed file size in bytes
 
 
 
@@ -40,7 +39,7 @@ The application has the following functionalities:
 1. saveHashToFile
 
 
-    0. The `saveHashToFile` function is designed to save a hash string, represented by `hash_str`, to a file specified by the `file` parameter. The hash string is assumed to have a length of `HASH_LEN` characters. The function utilizes the C++ standard library's `ofstream` to perform binary file output.
+    0. The `saveHashToFile` function is designed to save a hash string, represented by `hash_str`, to a file specified by the `file` parameter. The hash string is assumed to have a length of `HASH_LEN` characters. 
 
     1. Parameters
 
@@ -53,7 +52,7 @@ The application has the following functionalities:
 
     3. Implementation Details
 
-        - The function begins by checking for null pointers in the `hash_str` and `file` parameters. If either pointer is null, the function returns `false`. The hash string is then written to the specified file using an `ofstream` object. The file is opened in binary mode, and the hash string is written using the `write` method. The function checks if the write operation was successful and closes the file accordingly.
+        - The function begins by checking for null pointers in the `hash_str` and `file` parameters. If either pointer is null, the function returns `false`. The hash string is then written to the specified file using an `ofstream` object. The hash string is written using the `write` method. The function checks if the write operation was successful and closes the file accordingly.
 
 
 2. getHashFromFile 
@@ -73,26 +72,6 @@ The application has the following functionalities:
     3. Implementation Details
 
         - The function uses an `ifstream` to open the specified file. If the file opening is successful, it reads the first `HASH_LEN` symbols from the file into the `dest` array. The function checks for errors during the read operation and ensures that the read length matches the expected `HASH_LEN`. If any error occurs, the function sets `dest[0]` to the null terminator and returns `false`. Otherwise, it adds a null terminator at the end of the hash message in `dest` and closes the file.
-
-
-
-3. compareHashes
-
-    0. The `compareHashes` function is designed to compare two hash strings, `hash1` and `hash2`, to determine if they match. The function returns `true` if the hashes are identical and `false` otherwise.
-
-    1. Parameters
-
-        - `hash1` (const char*): A pointer to the first hash string to be compared.
-        - `hash2` (const char*): A pointer to the second hash string to be compared.
-
-    2. Return Value
-
-        - `bool`: The function returns `true` if the hash strings match, and `false` if either `hash1` or `hash2` is null or if the hash strings differ.
-
-    3. Implementation Details
-
-        - The function iterates through each character in the hash strings and checks if the corresponding characters at the same position are equal. If any pair of characters differs, the function returns `false`, indicating that the hashes do not match. If the loop completes without finding any differences, the function returns `true`.
-
 
 ### SHA functions
 1. SHA256 
@@ -128,8 +107,7 @@ The application has the following functionalities:
 
 
 
-2. # SHA256File Function Documentation
-
+2. SHA256File Function Documentation
     0. The `SHA256File` function serves as the main entry point for computing the SHA-256 hash of a file. It takes the file path as input, processes the file in 64-symbol blocks, and produces the final hash, which is then stored in the character array provided as the `dest` parameter.
 
     1. Parameters
@@ -155,9 +133,6 @@ The application has the following functionalities:
         - `subhashes`: An array representing the sub-hashes, initialized with predefined values.
 
         The function initializes the sub-hashes and proceeds to update them through the `SHA256FileUpdate` function, which processes the file in blocks. After the file is fully processed, the final SHA-256 computation is performed using the `SHA256Final` function. Finally, the resulting subhashes are converted to a hash string using the `subhashesToStr` function.
-
-
-
 
 2. subhashesToStr
     0. The `subhashesToStr` function is designed to convert an array of 8 subhashes, each represented as a 4-byte word, into a single hash string. The resulting hash string is stored in a character array provided as the `dest` parameter. The hash string is represented in hexadecimal format.
@@ -264,3 +239,20 @@ The application has the following functionalities:
         - The function opens the specified file and reads data from it in 64-character (512-bit) blocks. For each block, the `SHA256Step` function is called to update the subhashes and bit length. The index of the incomplete last block (`idxInBuffer`) is then stored for future reference.
 
         - After processing the entire file, the file stream is closed.
+
+8. compareHashes
+
+    0. The `compareHashes` function is designed to compare two hash strings, `hash1` and `hash2`, to determine if they match. The function returns `true` if the hashes are identical and `false` otherwise.
+
+    1. Parameters
+
+        - `hash1` (const char*): A pointer to the first hash string to be compared.
+        - `hash2` (const char*): A pointer to the second hash string to be compared.
+
+    2. Return Value
+
+        - `bool`: The function returns `true` if the hash strings match, and `false` if either `hash1` or `hash2` is null or if the hash strings differ.
+
+    3. Implementation Details
+
+        - The function iterates through each character in the hash strings and checks if the corresponding characters at the same position are equal. If any pair of characters differs, the function returns `false`, indicating that the hashes do not match. If the loop completes without finding any differences, the function returns `true`.

@@ -314,7 +314,7 @@ bool saveHashToFile(const char* hash_str, const char* file) {
     {
         ofstream outFile;
 
-        outFile.open(file, ios::binary);
+        outFile.open(file);
         if (!outFile.is_open()) {
             return false;
         }
