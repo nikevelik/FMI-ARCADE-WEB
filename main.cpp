@@ -628,6 +628,6 @@ int main()
         cout << "Hashes:\n" << hashedFile << " and\n" << hashedString << "\ndo not match.\n";
     }
 
-    return 0; // Indicate success
+    return 0;
 }
 
