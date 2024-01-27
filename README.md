@@ -18,13 +18,13 @@ The application has the following functionalities:
 4. getBitwiseMajority - If a minimum 2 of 3 bits at position n in inputs x, y, z are 1, the majority of bits is considered 1. Thus, bit at position n in result will be 1. Otherwise 0.
 
 ### SHA 256 Logical Functions
-1. Expansion Permutation 0: fundamental constant function in the SHA-256 algorithm. It involves circular right rotations of the input 'x' at specific bit positions (2, 13, and 22). EP0 contributes to the non-linearity and diffusion properties required for secure cryptographic hash generation.
+1. Big Sigma 0: fundamental constant function in the SHA-256 algorithm. It involves circular right rotations of the input 'x' at specific bit positions (2, 13, and 22). EP0 contributes to the non-linearity and diffusion properties required for secure cryptographic hash generation.
 
-2. Expansion Permutation 1: another crucial constant function in the SHA-256 algorithm. Similar to EP0, it performs circular right rotations on the input 'x' at specific bit positions (6, 11, and 25). EP1 plays a vital role in enhancing the cryptographic strength of the hash function.
+2. Big Sigma 1: another crucial constant function in the SHA-256 algorithm. Similar to EP0, it performs circular right rotations on the input 'x' at specific bit positions (6, 11, and 25). EP1 plays a vital role in enhancing the cryptographic strength of the hash function.
 
-3. Sigma 0: an essential constant function that integrates circular right rotations and bit-wise shifting operations. It operates on the input 'x' at specific bit positions (7, 18, and 3) to introduce further complexity and security to the SHA-256 algorithm.
+3. Small Sigma 0: an essential constant function that integrates circular right rotations and bit-wise shifting operations. It operates on the input 'x' at specific bit positions (7, 18, and 3) to introduce further complexity and security to the SHA-256 algorithm.
 
-4. Sigma 1: a critical constant function in the SHA-256 algorithm, similar to SIG0. It applies circular right rotations and bit-wise shifting operations to the input 'x' at specified bit positions (17, 19, and 10). SIG1 contributes to the overall robustness and cryptographic properties of the hash function.
+4. Small Sigma 1: a critical constant function in the SHA-256 algorithm, similar to SIG0. It applies circular right rotations and bit-wise shifting operations to the input 'x' at specified bit positions (17, 19, and 10). SIG1 contributes to the overall robustness and cryptographic properties of the hash function.
 
 ### Constants
 1. ROUND_CONSTANTS (K0-K63): SHA-256 uses a set of 64 constant 32-bit words (K0, K1, ..., K63) during the processing of each 512-bit block of the input message. These constants are derived from the fractional parts of the cube roots of the first 64 prime numbers.

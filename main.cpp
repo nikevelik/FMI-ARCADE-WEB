@@ -91,32 +91,32 @@ unsigned int getBitwiseMajority(unsigned int x, unsigned int y, unsigned int z)
 }
 
 // rotation at 2, 13, 22.
-unsigned int expansionPermutation0(unsigned int x)
+unsigned int bigSigma0(unsigned int x)
 {
     return getRightRotation(x, 2) ^ getRightRotation(x, 13) ^ getRightRotation(x, 22);
 }
 
 // rotation at 6, 11, 25.
-unsigned int expansionPermutation1(unsigned int x)
+unsigned int bigSigma1(unsigned int x)
 {
     return getRightRotation(x, 6) ^ getRightRotation(x, 11) ^ getRightRotation(x, 25);
 }
 
 // rotation and shifting at 7, 18, 3.
-unsigned int sigma0(unsigned int x)
+unsigned int smallSigma0(unsigned int x)
 {
     return getRightRotation(x, 7) ^ getRightRotation(x, 18) ^ (x >> 3);
 }
 
 // rotation and shifting at 17, 19, 10.
-unsigned int sigma1(unsigned int x)
+unsigned int smallSigma1(unsigned int x)
 {
     return getRightRotation(x, 17) ^ getRightRotation(x, 19) ^ (x >> 10);
 }
 
 // Helper function to calculate tmp1 value in SHA256Transform
 unsigned int calculateTmp1(unsigned int subhashIncrement[8], unsigned int wordIdx, const unsigned int messageSchedule[64]) {
-    return subhashIncrement[7] + expansionPermutation1(subhashIncrement[4])
+    return subhashIncrement[7] + bigSigma1(subhashIncrement[4])
         + getChooseBitByBit(subhashIncrement[4], subhashIncrement[5], subhashIncrement[6])
         + ROUND_CONSTANTS[wordIdx]
         + messageSchedule[wordIdx];
@@ -124,7 +124,7 @@ unsigned int calculateTmp1(unsigned int subhashIncrement[8], unsigned int wordId
 
 // Helper function to calculate tmp2 value in SHA256Transform
 unsigned int calculateTmp2(unsigned int subhashIncrement[8]) {
-    return expansionPermutation0(subhashIncrement[0])
+    return bigSigma0(subhashIncrement[0])
         + getBitwiseMajority(subhashIncrement[0], subhashIncrement[1], subhashIncrement[2]);
 }
 
@@ -182,9 +182,9 @@ bool SHA256Transform(const unsigned char *data,
     // fill up the rest (48) elements with values, based on the first 16.
     for (; wordIdx < MESSAGE_SCHEDULE_SIZE; wordIdx++)
     {
-        messageSchedule[wordIdx] = sigma1(messageSchedule[wordIdx - 2])
+        messageSchedule[wordIdx] = smallSigma1(messageSchedule[wordIdx - 2])
                                     + messageSchedule[wordIdx - 7]
-                                    + sigma0(messageSchedule[wordIdx - 15])
+                                    + smallSigma0(messageSchedule[wordIdx - 15])
                                     + messageSchedule[wordIdx - 16];
     }
     // calculate values to add to subhashes, based on the 1.previous values, 2. round constants, 3. message schedule
