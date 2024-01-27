@@ -530,100 +530,186 @@ bool SHA256File(const char *file, char *dest)
     return true;
 }
 
-int main()
-{
-    char hashedString[HASH_SIZE + 1],
-         loadedHash[HASH_SIZE + 1],
-         hashedFile[HASH_SIZE + 1],
-         hashedStringLikeFile[HASH_SIZE + 1];
-
-    const char *inputString = "1";
-    const char *inputFile = "example.txt";
-    const char *outputFile = "hash1.txt";
-    const char *inputStringLikeFile = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
-
-    // Hash input string
-    if (SHA256(inputString, hashedString))
-    {
-        cout << "SHA256('" << inputString << "') -> " << hashedString << "\n";
-    }
-    else
-    {
-        cerr << "Error hashing the input string.\n";
-        return 1;
+int strcmp(const char *str1, const char *str2) {
+    while (*str1 && *str2) {
+        if (*str1 < *str2) {
+            return -1;
+        } else if (*str1 > *str2) {
+            return 1;
+        }
+        // Move to the next characters in both strings
+        str1++;
+        str2++;
     }
 
-    // Save hash to file
-    if (saveHashToFile(hashedString, outputFile))
-    {
-        cout << "Hash '" << hashedString << "' saved to file " << outputFile << "\n";
+    // If we reached here, it means both strings are equal so far
+    if (!*str1 && !*str2) {
+        return 0;
+    } else if (!*str1) {
+        return -1; // str1 is shorter
+    } else {
+        return 1;  // str2 is shorter
     }
-    else
-    {
-        cerr << "Error saving hash to file.\n";
-        return 1;
+}
+
+
+void processCommand(const char* command) {
+    char cmd[20];
+    int i = 0;
+
+    // Extract the command
+    while (command[i] != '\0' && command[i] != ' ' && i < sizeof(cmd) - 1) {
+        cmd[i] = command[i];
+        i++;
+    }
+    cmd[i] = '\0';
+
+    char hashedString[HASH_SIZE + 1];
+    char loadedHash[HASH_SIZE + 1];
+    char hashedFile[HASH_SIZE + 1];
+    char hashedStringLikeFile[HASH_SIZE + 1];
+
+    // Skip spaces
+    while (command[i] != '\0' && command[i] == ' ') {
+        i++;
     }
 
-    // Load hash from file
-    if (getHashFromFile(outputFile, loadedHash))
-    {
-        cout << "Hash '" << loadedHash << "' read from file " << outputFile << "\n";
-    }
-    else
-    {
-        cerr << "Error reading hash from file.\n";
-        return 1;
-    }
+    if (strcmp(cmd, "hash") == 0) {
+        int j = 0;
+        char text[100];
 
-    // Hash input file
-    if (SHA256File(inputFile, hashedFile))
-    {
-        cout << "SHA256('" << inputFile << "') -> " << hashedFile << "\n";
-    }
-    else
-    {
-        cerr << "Error hashing the input file.\n";
-    }
+        // Read the input string until a space or the end of the command
+        while (command[i] != '\0' && command[i] != ' ' && j < sizeof(text) - 1) {
+            text[j] = command[i];
+            i++;
+            j++;
+        }
+        text[j] = '\0';
 
-    // Hash input string like a file
-    if (SHA256(inputStringLikeFile, hashedStringLikeFile))
-    {
-        cout << "SHA256('" << inputStringLikeFile << "') -> " << hashedStringLikeFile << "\n";
-    }
-    else
-    {
-        cerr << "Error hashing the input string.\n";
-        return 1;
-    }
+        if (SHA256(text, hashedString)) {
+            cout << "Hash: " << hashedString << endl;
+        } else {
+            cerr << "Error hashing the input string.\n";
+        }
+    } else if (strcmp(cmd, "hash_file") == 0) {
+        int j = 0;
+        char file[100];
 
-    // Compare hashes
-    if (compareHashes(loadedHash, hashedString))
-    {
-        cout << "Hashes:\n" << loadedHash << " and\n" << hashedString << "\nmatch!\n";
-    }
-    else
-    {
-        cout << "Hashes:\n" << loadedHash << " and\n" << hashedString << "\ndo not match.\n";
-    }
+        // Read the input file name until a space or the end of the command
+        while (command[i] != '\0' && command[i] != ' ' && j < sizeof(file) - 1) {
+            file[j] = command[i];
+            i++;
+            j++;
+        }
+        file[j] = '\0';
 
-    if (compareHashes(hashedFile, hashedStringLikeFile))
-    {
-        cout << "Hashes:\n" << hashedFile << " and\n" << hashedStringLikeFile << "\nmatch!\n";
-    }
-    else
-    {
-        cout << "Hashes:\n" << hashedFile << " and\n" << hashedStringLikeFile << "\ndo not match.\n";
-    }
+        if (SHA256File(file, hashedFile)) {
+            cout << "Hash: " << hashedFile << endl;
+        } else {
+            cerr << "Error hashing the input file.\n";
+        }
+    } else if (strcmp(cmd, "compare_hashes") == 0) {
+        int j = 0;
+        char hash1[HASH_SIZE + 1], hash2[HASH_SIZE + 1];
 
-    if (compareHashes(hashedFile, hashedString))
-    {
-        cout << "Hashes:\n" << hashedFile << " and\n" << hashedString << "\nmatch!\n";
+        // Read the first hash until a space or the end of the command
+        while (command[i] != '\0' && command[i] != ' ' && j < HASH_SIZE) {
+            hash1[j] = command[i];
+            i++;
+            j++;
+        }
+        hash1[j] = '\0';
+
+        // Skip spaces
+        while (command[i] != '\0' && command[i] == ' ') {
+            i++;
+        }
+
+        j = 0;
+
+        // Read the second hash until a space or the end of the command
+        while (command[i] != '\0' && command[i] != ' ' && j < HASH_SIZE) {
+            hash2[j] = command[i];
+            i++;
+            j++;
+        }
+        hash2[j] = '\0';
+
+        if (compareHashes(hash1, hash2)) {
+            cout << "Hashes match!\n";
+        } else {
+            cout << "Hashes do not match.\n";
+        }
+    } else if (strcmp(cmd, "load_hash_from_file") == 0) {
+        int j = 0;
+        char file[100];
+
+        // Read the file name until a space or the end of the command
+        while (command[i] != '\0' && command[i] != ' ' && j < sizeof(file) - 1) {
+            file[j] = command[i];
+            i++;
+            j++;
+        }
+        file[j] = '\0';
+
+        if (getHashFromFile(file, loadedHash)) {
+            cout << "Hash loaded: " << loadedHash << endl;
+        } else {
+            cerr << "Error loading hash from file.\n";
+        }
+    } else if (strcmp(cmd, "save_hash_to_file") == 0) {
+        int j = 0;
+        char hash[HASH_SIZE + 1], file[100];
+
+        // Read the hash until a space or the end of the command
+        while (command[i] != '\0' && command[i] != ' ' && j < HASH_SIZE) {
+            hash[j] = command[i];
+            i++;
+            j++;
+        }
+        hash[j] = '\0';
+
+        // Skip spaces
+        while (command[i] != '\0' && command[i] == ' ') {
+            i++;
+        }
+
+        j = 0;
+
+        // Read the file name until a space or the end of the command
+        while (command[i] && command[i] != ' ' && j < sizeof(file) - 1) {
+            file[j] = command[i];
+            i++;
+            j++;
+        }
+        file[j] = '\0';
+
+        if (saveHashToFile(hash, file)) {
+            cout << "Hash saved to file: " << file << endl;
+        } else {
+            cerr << "Error saving hash to file.\n";
+        }
+    } else {
+        cout << "Invalid command.\n";
     }
-    else
-    {
-        cout << "Hashes:\n" << hashedFile << " and\n" << hashedString << "\ndo not match.\n";
+}
+
+int main() {
+    char command[200];
+
+    cout << "Available commands: exit,\nsave_hash_to_file <h> <f>,\nload_hash_from_file <f>,\ncompare_hashes <h> <h>,\nhash_file <f>,\nhash <text>\n\n";
+
+    while (true) {
+
+        cout << "Enter a command: ";
+
+        cin.getline(command, sizeof(command));
+        if (!strcmp(command, "exit")) {
+            break;
+        }
+
+        processCommand(command);
     }
 
     return 0;
 }
-
