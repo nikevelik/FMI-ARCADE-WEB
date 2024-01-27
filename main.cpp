@@ -145,10 +145,6 @@ bool compareHashes(const char *hash1, const char *hash2)
     return true;
 }
 
-bool SHA256SubHashesIncrement(){
-
-}
-
 // hashing (with sha256 algorithm) transformation on the 8 subhashes, based on the data
 // data is an array (block) of 64 elements with values 0-256
 bool SHA256Transform(const unsigned char *data,
