@@ -128,23 +128,6 @@ unsigned int calculateTmp2(unsigned int subhashIncrement[8]) {
         + getBitwiseMajority(subhashIncrement[0], subhashIncrement[1], subhashIncrement[2]);
 }
 
-// check if hashes match or not
-bool compareHashes(const char *hash1, const char *hash2)
-{
-    if (!hash1 | !hash2)
-    {
-        return false;
-    }
-    for (int i = 0; i < HASH_SIZE; ++i)
-    {
-        if (*(hash1 + i) != *(hash2 + i))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 // hashing (with sha256 algorithm) transformation on the 8 subhashes, based on the data
 // data is an array (block) of 64 elements with values 0-256
 bool SHA256Transform(const unsigned char *data,
@@ -553,6 +536,26 @@ int strcmp(const char *str1, const char *str2) {
 }
 
 
+// check if hashes match or not
+bool compareHashes(const char *msg1, const char *hash2)
+{
+    if (!msg1 | !hash2)
+    {
+        return false;
+    }
+    char hash1[HASH_SIZE + 1];
+    SHA256(msg1, hash1);
+    for (int i = 0; i < HASH_SIZE; ++i)
+    {
+        if (*(hash1 + i) != *(hash2 + i))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 void processCommand(const char* command) {
     char cmd[20];
     int i = 0;
@@ -610,15 +613,15 @@ void processCommand(const char* command) {
         }
     } else if (strcmp(cmd, "compare_hashes") == 0) {
         int j = 0;
-        char hash1[HASH_SIZE + 1], hash2[HASH_SIZE + 1];
+        char message[100], hash2[HASH_SIZE + 1];
 
         // Read the first hash until a space or the end of the command
         while (command[i] != '\0' && command[i] != ' ' && j < HASH_SIZE) {
-            hash1[j] = command[i];
+            message[j] = command[i];
             i++;
             j++;
         }
-        hash1[j] = '\0';
+        message[j] = '\0';
 
         // Skip spaces
         while (command[i] != '\0' && command[i] == ' ') {
@@ -635,7 +638,7 @@ void processCommand(const char* command) {
         }
         hash2[j] = '\0';
 
-        if (compareHashes(hash1, hash2)) {
+        if (compareHashes(message, hash2)) {
             cout << "Hashes match!\n";
         } else {
             cout << "Hashes do not match.\n";
@@ -697,7 +700,7 @@ void processCommand(const char* command) {
 int main() {
     char command[200];
 
-    cout << "Available commands: exit,\nsave_hash_to_file <h> <f>,\nload_hash_from_file <f>,\ncompare_hashes <h> <h>,\nhash_file <f>,\nhash <text>\n\n";
+    cout << "Available commands: exit,\nsave_hash_to_file <hash> <file>,\nload_hash_from_file <file>,\ncompare_hashes <message> <hash>,\nhash_file <file>,\nhash <message>\n\n";
 
     while (true) {
 
